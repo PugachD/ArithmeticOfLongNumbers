@@ -30,15 +30,21 @@ namespace ArithmeticOfLongNumbers.ViewModel
         private BasicCalculations basicCalc;
         private string fullPathNameTxtFile;
         private string nameButtonRun;
-        private ObservableCollection<Expression> expressionList;
+        private ListExpression expressionList;
         #endregion
 
         #region Свойства
-        public ObservableCollection<Expression> ExpressionList
+
+        public ListExpression ExpressionList
         {
             get
             {
                 return expressionList;
+            }
+            set
+            {
+                expressionList = value;
+                RaisePropertyChanged("ExpressionList");
             }
         }
         public string NameButtonRun
@@ -95,16 +101,17 @@ namespace ArithmeticOfLongNumbers.ViewModel
 
         private void RunCalc()
         {
+            expressionList = new ListExpression();
             try
             {
                 if (runCalc)
                 {
                     runCalc = !runCalc;
                     NameButtonRun = nameAfterRun;
-
-                    Parser.Parsing.expression = null;
-                    basicCalc.RunCalc(FileWork.ReadFile(FullPathNameTxtFile));
+                    
+                    basicCalc.RunCalc(FileWork.ReadFile(FullPathNameTxtFile), expressionList);
                     file.SaveFile(basicCalc.GetAnswerTxtFile);
+                    ExpressionList = basicCalc.GetListExpression;
 
                     NameButtonRun = nameUntilRun;
                 }

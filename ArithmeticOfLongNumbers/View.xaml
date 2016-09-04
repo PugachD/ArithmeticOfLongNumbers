@@ -58,17 +58,17 @@
                     <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Grid.Row="1" Grid.Column="2"/>
                 </Grid>
             </StackPanel>
-            <DataGrid x:Name="dataGrid" DockPanel.Dock="Left" AutoGenerateColumns="False">
+            <DataGrid x:Name="dataGrid" DockPanel.Dock="Left" AutoGenerateColumns="False" ItemsSource="{Binding ExpressionList}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Операция" >
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Количество вычислений" Binding="{Binding Path=}">
+                    <DataGridTextColumn Header="Количество вычислений" Binding="{}">
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Общее время вычисления">
+                    <DataGridTextColumn Header="Общее время вычисления" Binding="{Binding Path=}">
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Среднее время вычисления">
+                    <DataGridTextColumn Header="Среднее время вычисления" Binding="{Binding Path=ExpressionList}">
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Процент от общего времени обработки">
+                    <DataGridTextColumn Header="Процент от общего времени обработки" Binding="{Binding Path=ExpressionList}">
                     </DataGridTextColumn>
                 </DataGrid.Columns>
                 <DataGrid.Items>

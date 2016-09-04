@@ -15,19 +15,25 @@ namespace ArithmeticOfLongNumbers.Model
         private string[] answerTxtFile;
         private List<StructFileInfo> listStruct = new List<StructFileInfo>();
         private uint countExpression;
+        private ListExpression listExpression;
 
         public string[] GetAnswerTxtFile
         {
             get { return answerTxtFile; }
         }
+        public ListExpression GetListExpression
+        {
+            get { return listExpression; }
+        }
 
-        public void RunCalc(string[] _allLinesFile)
+        public void RunCalc(string[] _allLinesFile, ListExpression _listExpression)
         {
             try
             {
                 allLineFile = _allLinesFile;
                 answerTxtFile = new string[allLineFile.Count()];
                 answerTxtFile[0] = allLineFile[0];
+                listExpression = _listExpression;
 
                 if (allLineFile == null)
                     throw new Exception();
@@ -51,7 +57,7 @@ namespace ArithmeticOfLongNumbers.Model
             try
             {
                 string RPN = Parsing.GetExpression(structure.expression);
-                result = Parsing.Counting(RPN).ToString();
+                result = Parsing.Counting(RPN, ref listExpression).ToString();
 
             }
             catch
