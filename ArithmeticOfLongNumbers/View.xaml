@@ -7,6 +7,9 @@
         xmlns:operator="clr-namespace:ArithmeticOfLongNumbers.Operation"
         mc:Ignorable="d"
         Title="Арифметика длинных чисел" Height="350" Width="525" WindowStartupLocation="CenterOwner" WindowState="Maximized" FontFamily="Verdana" FontSize="14">
+    <Window.Resources>
+        <local:MainViewModel x:Key="MVM"></local:MainViewModel>
+    </Window.Resources>
     <Window.DataContext>
         <local:MainViewModel></local:MainViewModel>
     </Window.DataContext>
@@ -29,13 +32,13 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                <Button x:Name="buttonChooseFile" Width="auto" Height="auto" Content="Выбрать файл" Command="{Binding ClickOpenFile}"></Button>
+                <Button x:Name="buttonChooseFile" IsEnabled="{Binding Path=IsEnabledBtnOpenFile}" Width="auto" Height="auto" Content="Выбрать файл" Command="{Binding OpenFileCommand}"></Button>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1">
                 <TextBlock  Name="textBlockFileName" Text="{Binding Path=FullPathNameTxtFile, Mode=TwoWay}" Margin="5"/>
             </StackPanel>
             <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                <Button x:Name="buttonRun" Width="auto" Height="auto" Content="{Binding Path=NameButtonRun, Mode=TwoWay}" Command="{Binding ClickRunCalc}"></Button>
+                <Button x:Name="buttonRun" IsEnabled="{Binding Path=IsEnabledBtnRun}" Width="auto" Height="auto" Content="{Binding Path=NameButtonRun, Mode=TwoWay}" Command="{Binding RunCalcCommand}"></Button>
             </StackPanel>
         </Grid>
         <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -58,17 +61,17 @@
                     <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Grid.Row="1" Grid.Column="2"/>
                 </Grid>
             </StackPanel>
-            <DataGrid x:Name="dataGrid" DockPanel.Dock="Left" AutoGenerateColumns="False" ItemsSource="{Binding ExpressionList}">
+            <DataGrid x:Name="dataGrid" DockPanel.Dock="Left" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Операция" >
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Количество вычислений" Binding="{}">
+                    <DataGridTextColumn Header="Количество вычислений">
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Общее время вычисления" Binding="{Binding Path=}">
+                    <DataGridTextColumn Header="Общее время вычисления" >
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Среднее время вычисления" Binding="{Binding Path=ExpressionList}">
+                    <DataGridTextColumn Header="Среднее время вычисления">
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Процент от общего времени обработки" Binding="{Binding Path=ExpressionList}">
+                    <DataGridTextColumn Header="Процент от общего времени обработки">
                     </DataGridTextColumn>
                 </DataGrid.Columns>
                 <DataGrid.Items>
@@ -81,7 +84,7 @@
             </DataGrid>
         </DockPanel>
         <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
-            <ProgressBar x:Name="progressBar" Height="20" Background="LightSeaGreen" Maximum="100" Minimum="0"></ProgressBar>
+            <ProgressBar x:Name="progressBar" Value="{Binding Path=ValueProgressBar}" Minimum="{Binding Path=MinValueProgressBar}" Maximum="{Binding Path=MaxValueProgressBar}" Height="20" Background="LightSeaGreen" DataContext="{StaticResource ResourceKey=MVM}"></ProgressBar>
         </StackPanel>
     </Grid>
 </Window>

@@ -11,32 +11,39 @@ namespace ArithmeticOfLongNumbers.Model
 {
     class BasicCalculations
     {
-        private string[] allLineFile;
-        private string[] answerTxtFile;
+        #region Member Fields
         private List<StructFileInfo> listStruct = new List<StructFileInfo>();
+        private Parsing parsing;
+        private string[] allLineFile, answerTxtFile;
         private uint countExpression;
-        private ListExpression listExpression;
+        #endregion
 
+        #region Properties
         public string[] GetAnswerTxtFile
         {
             get { return answerTxtFile; }
+            private set { }
         }
-        public ListExpression GetListExpression
-        {
-            get { return listExpression; }
-        }
+        #endregion
 
-        public void RunCalc(string[] _allLinesFile, ListExpression _listExpression)
+        #region Constructors
+        public BasicCalculations()
+        {
+            parsing = new Parsing();
+        }
+        #endregion
+
+        #region Functions
+        public void RunCalc(string[] _allLinesFile)
         {
             try
             {
                 allLineFile = _allLinesFile;
                 answerTxtFile = new string[allLineFile.Count()];
                 answerTxtFile[0] = allLineFile[0];
-                listExpression = _listExpression;
 
                 if (allLineFile == null)
-                    throw new Exception();
+                    throw new NullReferenceException();
 
                 GetCountStringFile();
                 FillListStructure();
@@ -45,7 +52,7 @@ namespace ArithmeticOfLongNumbers.Model
             }
             catch (Exception ex)
             {
-                MessageBox.Show(String.Format("Ошибки в файле: {0}", ex.Message));
+                throw new Exception(String.Format("Ошибки в файле: {0}", ex.Message));
             }
 
             MessageBox.Show("Расчет закончен");
@@ -56,11 +63,10 @@ namespace ArithmeticOfLongNumbers.Model
             string result;
             try
             {
-                string RPN = Parsing.GetExpression(structure.expression);
-                result = Parsing.Counting(RPN, ref listExpression).ToString();
-
+                string RPN = parsing.GetExpression(structure.expression);
+                result = parsing.Counting(RPN).ToString();
             }
-            catch
+            catch (Exception ex)
             {
                 result  = "Ошибка";
             }
@@ -85,5 +91,6 @@ namespace ArithmeticOfLongNumbers.Model
             if (countExpression > (allLineFile.Length - 1))
                 throw new Exception("Количество строк для расчета превышает число строк в файле");
         }
+        #endregion
     }
 }

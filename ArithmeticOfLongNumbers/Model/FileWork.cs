@@ -12,9 +12,9 @@ namespace ArithmeticOfLongNumbers
     public class FileWork
     {
         private string[] allLinesFile;
+        private string nameTxtFile { get; set; }
 
         public string FullPathNameTxtFile { get; set; }
-        private string NameTxtFile { get; set; }
 
         public string[] GetAllLinesFile
         {
@@ -24,7 +24,6 @@ namespace ArithmeticOfLongNumbers
 
         public void OpenFile ()
         {
-            Stream myStream = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = "C:\\";
             openFileDialog.Filter = "Text files (*.txt)|*.txt";
@@ -33,7 +32,7 @@ namespace ArithmeticOfLongNumbers
             if ((bool)openFileDialog.ShowDialog())
             {
                 FullPathNameTxtFile = openFileDialog.FileName;
-                NameTxtFile = Path.GetFileNameWithoutExtension(FullPathNameTxtFile);
+                nameTxtFile = Path.GetFileNameWithoutExtension(FullPathNameTxtFile);
                 
             }
         }
@@ -41,14 +40,14 @@ namespace ArithmeticOfLongNumbers
 
         public void SaveFile(string[] answer)
         {
-            string newFile = Directory.GetCurrentDirectory() + "\\Answer_" + NameTxtFile + ".txt";
+            string newFile = Directory.GetCurrentDirectory() + "\\Answer_" + nameTxtFile + ".txt";
             try
             {
                 File.WriteAllLines(newFile, answer, System.Text.Encoding.Default);
             }
-            catch
+            catch (IOException ex)
             {
-                MessageBox.Show("Запись в файл не удалась");
+                throw new IOException(ex.Message + ". Чтение из файла не удалось");
             }
         }
 
@@ -59,9 +58,10 @@ namespace ArithmeticOfLongNumbers
             {
                 textFile = File.ReadAllLines(nameFile, System.Text.Encoding.Default);
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 textFile = new string[] { "Чтение из файла не удалось" };
+                throw new IOException(ex.Message + ". Чтение из файла не удалось");
             }
             return textFile;
         }

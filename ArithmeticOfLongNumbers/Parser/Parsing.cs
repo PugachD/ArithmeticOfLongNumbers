@@ -9,7 +9,7 @@ namespace ArithmeticOfLongNumbers.Parser
     public class Parsing
     {
         //Метод возвращает true, если проверяемый символ - разделитель ("пробел" или "равно")
-        static private bool IsDelimeter(char c)
+        private bool IsDelimeter(char c)
         {
             if ((" ".IndexOf(c) != -1))
                 return true;
@@ -17,7 +17,7 @@ namespace ArithmeticOfLongNumbers.Parser
         }
 
         //Метод возвращает true, если проверяемый символ - оператор
-        static private bool IsOperator(char с)
+        private bool IsOperator(char с)
         {
             if (("+-/*().".IndexOf(с) != -1))
                 return true;
@@ -25,7 +25,7 @@ namespace ArithmeticOfLongNumbers.Parser
         }
 
         //Метод возвращает приоритет оператора
-        static private byte GetPriority(char s)
+        private byte GetPriority(char s)
         {
             switch (s)
             {
@@ -50,7 +50,7 @@ namespace ArithmeticOfLongNumbers.Parser
             return result; //Возвращаем результат
         }*/
 
-        static public string GetExpression(string input)
+        public string GetExpression(string input)
         {
             string output = string.Empty; //Строка для хранения выражения
             Stack<char> operStack = new Stack<char>(); //Стек для хранения операторов
@@ -111,7 +111,7 @@ namespace ArithmeticOfLongNumbers.Parser
             return output; //Возвращаем выражение в постфиксной записи
         }
 
-        static public BigInteger Counting(string input, ref ListExpression listExpression)
+        public BigInteger Counting(string input)
         {
             BigInteger result = 0; //Результат
             Stack<BigInteger> temp = new Stack<BigInteger>(); //Временный стек для решения
@@ -149,31 +149,26 @@ namespace ArithmeticOfLongNumbers.Parser
                         case '+':
                             expression = new Addition(b, a);
                             result = expression.Operator();
-                            listExpression[0] = expression;
                             break;
                         case '-':
                             if (isUnaryMinus)
                             {
                                 expression = new UnaryNegative(b, a); 
                                 result = expression.Operator();
-                                listExpression[5] = expression;
                             }
                             else
                             {
                                 expression = new Substraction(b, a);
                                 result = expression.Operator();
-                                listExpression[2] = expression;
                             }
                             break;
                         case '*':
                             expression = new Multiplication(b, a);
                             result = expression.Operator();
-                            listExpression[3] = expression;
                             break;
                         case '/':
                             expression = new Division(b, a);
                             result = expression.Operator();
-                            listExpression[4] = expression;
                             break;
                             //case '^': result = double.Parse(Math.Pow(double.Parse(b.ToString()), double.Parse(a.ToString())).ToString()); break;
                     }

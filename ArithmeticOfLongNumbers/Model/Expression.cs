@@ -5,26 +5,31 @@ using ArithmeticOfLongNumbers.Interface;
 
 namespace ArithmeticOfLongNumbers
 {
-    public class Expression: IExpression
+    public abstract class Expression: IExpression
     {
         protected BigInteger number1;
         protected BigInteger number2;
         
-        private static TimeSpan overallProcessingTime;
+        private TimeSpan overallProcessingTime;
 
         /// <summary>
         /// Общее время обработки всех операций всех операторов
         /// </summary>
-        public TimeSpan OverallProcessingTime
+        public TimeSpan GetOverallProcessingTime
         {
             get { return overallProcessingTime; }
-            set { overallProcessingTime += value; }
+            set { overallProcessingTime = value; }
         }
 
-        static Expression()
+        public void IncrementOverallProcessingTime(TimeSpan value)
+        {
+            overallProcessingTime += value;
+        }
+
+        /*static Expression()
         {
             overallProcessingTime = new TimeSpan();
-        }
+        }*/
 
         public Expression()
         {
@@ -36,9 +41,6 @@ namespace ArithmeticOfLongNumbers
             number2 = rhs;
         }
 
-        public virtual BigInteger Operator()
-        {
-            return 0;
-        }
+        public abstract BigInteger Operator();
     }
 }

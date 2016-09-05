@@ -52,7 +52,7 @@ namespace ArithmeticOfLongNumbers.Operation
             sWatch.Stop();
 
             TotalCalculationTime = sWatch.Elapsed;
-            OverallProcessingTime = sWatch.Elapsed;
+            IncrementOverallProcessingTime(sWatch.Elapsed);
 
             return result;
         }
