@@ -30,7 +30,6 @@ D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongN
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.exe
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.pdb
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\App.g.cs
-D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers_MarkupCompile.cache
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers_MarkupCompile.lref
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\bin\Debug\ArithmeticOfLongNumbers.exe
@@ -43,5 +42,6 @@ D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongN
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.g.resources
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.Properties.Resources.resources
 D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.csproj.GenerateResource.Cache
-D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\View.g.cs
-D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\View.baml
+D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\Views\View.g.cs
+D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\Views\View.baml
+D:\мое\Разработка\Тестовые Задания\ArithmeticOfLongNumber\ArithmeticOfLongNumbers\obj\Debug\ArithmeticOfLongNumbers.csprojResolveAssemblyReference.cache

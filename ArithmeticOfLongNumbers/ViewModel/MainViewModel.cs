@@ -6,20 +6,21 @@ using System.ComponentModel;
 using ArithmeticOfLongNumbers.Commands;
 using System.Threading;
 using ArithmeticOfLongNumbers.Operation;
+using ArithmeticOfLongNumbers.Utils;
 
 namespace ArithmeticOfLongNumbers.ViewModel
 {
-    public class MainViewModel : PropertyChangedView
+    public class MainViewModel : PropertyChangedClass
     {
         #region Member Fields
-        readonly string nameUntilRun = "Запустить расчет";
-        readonly string nameAfterRun = "Остановить расчет";
-
-        private BasicCalculations basicCalc;
+        private BasicCalculations basicCalculate;
+        private BackgroundWorker bgWorkerCalculation;
         private bool isEnabledBtnRun = false, isEnabledBtnOpenFile = false;
         private FileWork file;
+        private MathStatistics statistics;
         private string fullPathNameTxtFile;
-        private string nameButtonRun = "Запустить расчет";
+        private string[] allLineFile;
+        private bool isNameButtonAfterRun;
         private int minValueProgressBar = 0, maxValueProgressBar = 10;
         double valueProgressBar;
         #endregion
@@ -27,7 +28,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
         #region Member RelayCommands that implement ICommand
         RelayCommand _ResetCounter;
         RelayCommand _OpenFileCommand;
-        RelayCommand _RunCalcCommand;
+        RelayCommand _RunCalculationCommand;
         #endregion
 
         #region Constructors
@@ -36,12 +37,18 @@ namespace ArithmeticOfLongNumbers.ViewModel
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Initialization);
             worker.RunWorkerAsync();
+            Reset();
             //Initialization();
         }
         #endregion
 
         #region Properties
         
+        public MathStatistics Statistics
+        {
+            get { return statistics; }
+            set { statistics = value; OnPropertyChanged("Statistics"); }
+        }
         public bool IsEnabledBtnRun
         {
             get { return isEnabledBtnRun; }
@@ -49,13 +56,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
             {
                 isEnabledBtnRun = value;
                 OnPropertyChanged("IsEnabledBtnRun");
-                OnPropertyChanged("IsNotEnabledBtnRun");
             }
-        }
-
-        public bool IsNotEnabledBtnRun
-        {
-            get { return !IsEnabledBtnRun; }
         }
 
         public bool IsEnabledBtnOpenFile
@@ -65,21 +66,15 @@ namespace ArithmeticOfLongNumbers.ViewModel
             {
                 isEnabledBtnOpenFile = value;
                 OnPropertyChanged("IsEnabledBtnOpenFile");
-                OnPropertyChanged("IsNotEnabledBtnOpenFile");
             }
         }
-
-        public bool IsNotEnabledBtnOpenFile
+        public bool IsNameButtonAfterRun
         {
-            get { return !IsEnabledBtnOpenFile; }
-        }
-        public string NameButtonRun
-        {
-            get { return nameButtonRun; }
+            get { return isNameButtonAfterRun; }
             set
             {
-                nameButtonRun = value;
-                OnPropertyChanged("NameButtonRun");
+                isNameButtonAfterRun = value;
+                OnPropertyChanged("IsNameButtonAfterRun");
             }
         }
 
@@ -136,15 +131,15 @@ namespace ArithmeticOfLongNumbers.ViewModel
                 return _OpenFileCommand;
             }
         }
-        public ICommand RunCalcCommand
+        public ICommand RunCalculationCommand
         {
             get
             {
-                if (_RunCalcCommand == null)
+                if (_RunCalculationCommand == null)
                 {
-                    _RunCalcCommand = new RelayCommand(param => this.RunCalc());
+                    _RunCalculationCommand = new RelayCommand(param => this.RunCalculation());
                 }
-                return _RunCalcCommand;
+                return _RunCalculationCommand;
             }
         }
         public ICommand ResetCounter
@@ -168,10 +163,10 @@ namespace ArithmeticOfLongNumbers.ViewModel
             BackgroundWorker worker = sender as BackgroundWorker;
             try
             {
-                NameButtonRun = nameUntilRun;
+                IsNameButtonAfterRun = false;
                 //Инициализация объектов
                 file = new FileWork();
-                basicCalc = new BasicCalculations();
+                basicCalculate = new BasicCalculations(this);
                 IsEnabledBtnOpenFile = true;
             }
             catch (Exception ex)
@@ -186,9 +181,14 @@ namespace ArithmeticOfLongNumbers.ViewModel
         {
             try
             {
-                file.OpenFile();
-                FullPathNameTxtFile = file.FullPathNameTxtFile;
-                IsEnabledBtnRun = true;
+                if (file.OpenFile())
+                {
+                    FullPathNameTxtFile = file.FullPathNameTxtFile;
+                    allLineFile = file.ReadFile(FullPathNameTxtFile);
+                    MaxValueProgressBar = int.Parse(allLineFile[0]);
+                    IsEnabledBtnRun = true;
+                }
+
             }
             catch (Exception ex)
             {
@@ -198,57 +198,56 @@ namespace ArithmeticOfLongNumbers.ViewModel
             }
         }
 
-        private void RunCalc()
+        private void RunCalculation()
         {
             try
             {
                 //Запрещаем открытие нового файла во время работы алгоритма
                 IsEnabledBtnOpenFile = false;
-                if (NameButtonRun == nameUntilRun)
+                if (!IsNameButtonAfterRun)
                 {
-                    NameButtonRun = nameAfterRun;
+                    Statistics = new MathStatistics();
+                    IsNameButtonAfterRun = !IsNameButtonAfterRun;
 
-                    using (BackgroundWorker worker = new BackgroundWorker())
-                    {
-                        worker.DoWork += new DoWorkEventHandler(worker_DoRun);
+                    Reset();
+                    bgWorkerCalculation = new BackgroundWorker() { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
+                    bgWorkerCalculation.DoWork += new DoWorkEventHandler(worker_DoRunCalculation);
+                
 
-                        // Configure the function to run when completed
-                        worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+                    // Configure the function to run when completed
+                    bgWorkerCalculation.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
-                        // Launch the worker
-                        worker.RunWorkerAsync();
-                    }
+                    // Launch the worker
+                    bgWorkerCalculation.RunWorkerAsync();
 
                 }
-                else if (NameButtonRun == nameAfterRun)
+                else
                 {
-                    NameButtonRun = nameUntilRun;
+                    bgWorkerCalculation.CancelAsync();
+                    IsNameButtonAfterRun = false;
+                    IsEnabledBtnOpenFile = true;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
-            finally
-            {
             }
         }
 
-        private void worker_DoRun(object sender, DoWorkEventArgs e)
+        private void worker_DoRunCalculation(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            try
-            {
-                basicCalc.RunCalc(FileWork.ReadFile(FullPathNameTxtFile));
-                file.SaveFile(basicCalc.GetAnswerTxtFile);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+                try
+                {
+                    basicCalculate.RunCalc(allLineFile);
+                    file.SaveFile(basicCalculate.GetAnswerTxtFile);
+                    worker.ReportProgress(0);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
 
-            NameButtonRun = nameUntilRun;
-            IsEnabledBtnOpenFile = true;
         }
 
         /// <summary>
@@ -270,7 +269,9 @@ namespace ArithmeticOfLongNumbers.ViewModel
         /// <param name="e">The RunWorkerCompletedEventArgs object.</param>
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //IsEnabledBtnRun = false;
+            IsNameButtonAfterRun = false;
+            IsEnabledBtnOpenFile = true;
+            MessageBox.Show("Данные записаны в файл: " + file.NameNewTxtFile);
         }
 
         /// <summary>
@@ -278,8 +279,13 @@ namespace ArithmeticOfLongNumbers.ViewModel
         /// </summary>
         private void Reset()
         {
+            Expression.ResetInstanceStatistic();
+            Statistics = new MathStatistics();
+            Expression.InitializeStat(Statistics);
+            basicCalculate = new BasicCalculations(this);
             //Value = Min;
         }
+        
         #endregion
     }
 }

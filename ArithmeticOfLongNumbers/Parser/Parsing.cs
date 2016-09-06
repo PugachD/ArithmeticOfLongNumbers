@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using ArithmeticOfLongNumbers.Operation;
 using ArithmeticOfLongNumbers.Model;
+using ArithmeticOfLongNumbers.Utils;
 
 namespace ArithmeticOfLongNumbers.Parser
 {
@@ -111,7 +112,7 @@ namespace ArithmeticOfLongNumbers.Parser
             return output; //Возвращаем выражение в постфиксной записи
         }
 
-        public BigInteger Counting(string input)
+        public BigInteger Counting(string input, ref MathStatistics stat)
         {
             BigInteger result = 0; //Результат
             Stack<BigInteger> temp = new Stack<BigInteger>(); //Временный стек для решения
@@ -148,27 +149,27 @@ namespace ArithmeticOfLongNumbers.Parser
                         //case '.': Double.TryParse(Int32.Parse(b.ToString()).ToString() + "." + Int32.Parse(a.ToString()).ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture("en-GB"), out result); break;//b + double.Parse("0." + Int32.Parse(a.ToString()).ToString()); break;
                         case '+':
                             expression = new Addition(b, a);
-                            result = expression.Operator();
+                            result = expression.Operator(ref stat);
                             break;
                         case '-':
                             if (isUnaryMinus)
                             {
                                 expression = new UnaryNegative(b, a); 
-                                result = expression.Operator();
+                                result = expression.Operator(ref stat);
                             }
                             else
                             {
                                 expression = new Substraction(b, a);
-                                result = expression.Operator();
+                                result = expression.Operator(ref stat);
                             }
                             break;
                         case '*':
                             expression = new Multiplication(b, a);
-                            result = expression.Operator();
+                            result = expression.Operator(ref stat);
                             break;
                         case '/':
                             expression = new Division(b, a);
-                            result = expression.Operator();
+                            result = expression.Operator(ref stat);
                             break;
                             //case '^': result = double.Parse(Math.Pow(double.Parse(b.ToString()), double.Parse(a.ToString())).ToString()); break;
                     }

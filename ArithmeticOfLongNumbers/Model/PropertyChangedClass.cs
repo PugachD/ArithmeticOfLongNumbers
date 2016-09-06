@@ -2,7 +2,7 @@
 
 namespace ArithmeticOfLongNumbers.ViewModel
 {
-    public abstract class PropertyChangedView : INotifyPropertyChanged
+    public abstract class PropertyChangedClass : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

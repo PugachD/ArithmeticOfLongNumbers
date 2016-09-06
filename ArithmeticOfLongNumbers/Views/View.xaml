@@ -1,0 +1,130 @@
+﻿<Window x:Class="ArithmeticOfLongNumbers.View"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ArithmeticOfLongNumbers.ViewModel"
+        xmlns:model="clr-namespace:ArithmeticOfLongNumbers.Model"
+        mc:Ignorable="d"
+        Title="Арифметика длинных чисел" Height="350" Width="525" WindowStartupLocation="CenterOwner" WindowState="Maximized" FontFamily="Verdana" FontSize="14">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <Button x:Name="buttonChooseFile" IsEnabled="{Binding Path=IsEnabledBtnOpenFile}" Content="Выбрать файл" Command="{Binding OpenFileCommand}"></Button>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1">
+                <TextBlock  Name="textBlockFileName" Text="{Binding Path=FullPathNameTxtFile, Mode=TwoWay}" Margin="5"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <Button x:Name="buttonRun" IsEnabled="{Binding Path=IsEnabledBtnRun}" Command="{Binding RunCalculationCommand}">
+                    <Button.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNameButtonAfterRun}" Value="false">
+                                    <Setter Property="Button.Content" Value="Запустить расчет"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNameButtonAfterRun}" Value="true">
+                                    <Setter Property="Button.Content" Value="Остановить расчет"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel DockPanel.Dock="Bottom">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Время работы"></Label>
+                    <TextBlock x:Name="textBoxTimeWork" Text="{Binding Path=Statistics.OverallProcessingTime}" Grid.Row="1" Grid.Column="0"/>
+                    <Label Grid.Column="1" Grid.Row="0" Content="Количество обработанных выражений"></Label>
+                    <TextBlock x:Name="textBoxNumberOfProcessedExpr" Text="{Binding Path=Statistics.InstanceCount}" Grid.Row="1" Grid.Column="1"/>
+                    <Label Grid.Column="2" Grid.Row="0" Content="Прогноз остатка времени обработки"/>
+                    <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Grid.Row="1" Grid.Column="2"/>
+                </Grid>
+            </StackPanel>
+            <Grid x:Name="grid" DockPanel.Dock="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="Операция"></Label>
+                <Label Grid.Row="1" Grid.Column="0" Content="+"></Label>
+                <Label Grid.Row="2" Grid.Column="0" Content="-"></Label>
+                <Label Grid.Row="3" Grid.Column="0" Content="*"></Label>
+                <Label Grid.Row="4" Grid.Column="0" Content="/"></Label>
+                <Label Grid.Row="5" Grid.Column="0" Content="Унарный минус"></Label>
+
+                <Label Grid.Row="0" Grid.Column="1" Content="Количество вычислений"></Label>
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Statistics.CountAdditionOperation}"></Label>
+                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Statistics.CountSubstractionOperation}"></Label>
+                <Label Grid.Row="3" Grid.Column="1" Content="{Binding Statistics.CountMultiplicationOperation}"></Label>
+                <Label Grid.Row="4" Grid.Column="1" Content="{Binding Statistics.CountDivisionOperation}"></Label>
+                <Label Grid.Row="5" Grid.Column="1" Content="{Binding Statistics.CountUnaryNegativeOperation}"></Label>
+
+                <Label Grid.Row="0" Grid.Column="2" Content="Общее время вычисления"></Label>
+                <Label Grid.Row="1" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeAddition}"></Label>
+                <Label Grid.Row="2" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeSubstraction}"></Label>
+                <Label Grid.Row="3" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeMultiplication}"></Label>
+                <Label Grid.Row="4" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeDivision}"></Label>
+                <Label Grid.Row="5" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeUnaryNegative}"></Label>
+
+
+                <Label Grid.Row="0" Grid.Column="3" Content="Среднее время вычисления"></Label>
+                <Label Grid.Row="1" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeAddition}"></Label>
+                <Label Grid.Row="2" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeSubstraction}"></Label>
+                <Label Grid.Row="3" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeMultiplication}"></Label>
+                <Label Grid.Row="4" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeDivision}"></Label>
+                <Label Grid.Row="5" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeUnaryNegative}"></Label>
+
+
+                <Label Grid.Row="0" Grid.Column="4" Content="Процент от общего времени обработки"></Label>
+                <Label Grid.Row="1" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeAddition}"></Label>
+                <Label Grid.Row="2" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeSubstraction}"></Label>
+                <Label Grid.Row="3" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeMultiplication}"></Label>
+                <Label Grid.Row="4" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeDivision}"></Label>
+                <Label Grid.Row="5" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeUnaryNegative}"></Label>
+                
+            </Grid>
+        </DockPanel>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
+            <ProgressBar x:Name="progressBar" Value="{Binding Path=Statistics.InstanceCount}"  Minimum="{Binding Path= MinValueProgressBar}" Maximum="{Binding Path=MaxValueProgressBar}" Height="20" Background="LightSeaGreen"></ProgressBar>
+        </StackPanel>
+    </Grid>
+</Window>

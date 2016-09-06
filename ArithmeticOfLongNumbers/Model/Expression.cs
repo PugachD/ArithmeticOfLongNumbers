@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Numerics;
 using ArithmeticOfLongNumbers.Interface;
+using ArithmeticOfLongNumbers.Utils;
 
 namespace ArithmeticOfLongNumbers
 {
@@ -10,21 +11,18 @@ namespace ArithmeticOfLongNumbers
         protected BigInteger number1;
         protected BigInteger number2;
         
-        private TimeSpan overallProcessingTime;
+        private static MathStatistics statistics;
 
-        /// <summary>
-        /// Общее время обработки всех операций всех операторов
-        /// </summary>
-        public TimeSpan GetOverallProcessingTime
+        public static void InitializeStat(MathStatistics _statistics)
         {
-            get { return overallProcessingTime; }
-            set { overallProcessingTime = value; }
+            statistics = _statistics;
         }
 
-        public void IncrementOverallProcessingTime(TimeSpan value)
+        public static void ResetInstanceStatistic()
         {
-            overallProcessingTime += value;
+            statistics = null;
         }
+
 
         /*static Expression()
         {
@@ -41,6 +39,6 @@ namespace ArithmeticOfLongNumbers
             number2 = rhs;
         }
 
-        public abstract BigInteger Operator();
+        public abstract BigInteger Operator(ref MathStatistics stat);
     }
 }

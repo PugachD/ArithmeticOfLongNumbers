@@ -11,18 +11,14 @@ namespace ArithmeticOfLongNumbers
 {
     public class FileWork
     {
-        private string[] allLinesFile;
-        private string nameTxtFile { get; set; }
+        private string nameTxtFile;
+        private string nameNewTxtFile;
 
         public string FullPathNameTxtFile { get; set; }
+        public string NameNewTxtFile { get { return nameNewTxtFile; } set {nameNewTxtFile = value; } }
 
-        public string[] GetAllLinesFile
-        {
-            get { return allLinesFile; }
-            private set { allLinesFile = value; }
-        }
 
-        public void OpenFile ()
+        public bool OpenFile ()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = "C:\\";
@@ -33,25 +29,33 @@ namespace ArithmeticOfLongNumbers
             {
                 FullPathNameTxtFile = openFileDialog.FileName;
                 nameTxtFile = Path.GetFileNameWithoutExtension(FullPathNameTxtFile);
-                
+                return true;
             }
+            else if (FullPathNameTxtFile == "")
+            {
+                throw new FileNotFoundException("Файл не выбран");
+            }
+            else
+                return false;
+
         }
 
 
         public void SaveFile(string[] answer)
         {
-            string newFile = Directory.GetCurrentDirectory() + "\\Answer_" + nameTxtFile + ".txt";
+            NameNewTxtFile = Directory.GetCurrentDirectory() + "\\Answer_" + nameTxtFile + ".txt";
             try
             {
-                File.WriteAllLines(newFile, answer, System.Text.Encoding.Default);
+                File.WriteAllLines(NameNewTxtFile, answer, System.Text.Encoding.Default);
             }
             catch (IOException ex)
             {
                 throw new IOException(ex.Message + ". Чтение из файла не удалось");
             }
+
         }
 
-        public static string[] ReadFile(string nameFile)
+        public string[] ReadFile(string nameFile)
         {
             string[] textFile;
             try

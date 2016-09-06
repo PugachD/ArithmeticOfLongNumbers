@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArithmeticOfLongNumbers.Utils;
+using System;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -6,43 +7,14 @@ namespace ArithmeticOfLongNumbers.Operation
 {
     public class Division : Expression
     {
-        private static int countCalculations;
-        private static TimeSpan totalCalculationTime;
-        private static TimeSpan averageCalculationTime;
-
-        /// <summary>
-        /// Полное время обработки всех операций одного оператора
-        /// </summary>
-        public static TimeSpan TotalCalculationTime
-        {
-            get { return totalCalculationTime; }
-            set { totalCalculationTime += value; }
-        }
-        /// <summary>
-        /// Среднее время обработки всех операций одного оператора
-        /// </summary>
-        public static TimeSpan AverageCalculationTime
-        {
-            get { return averageCalculationTime; }
-            set { averageCalculationTime += value; }
-        }
-
-        public static int CountCalculations
-        {
-            get { return countCalculations; }
-            set { countCalculations += value; }
-        }
-
         public Division():base()
         {
-            CountCalculations = 1;
         }
         public Division(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2)
         {
-            CountCalculations = 1;
         }
 
-        public override BigInteger Operator()
+        public override BigInteger Operator(ref MathStatistics stat)
         {
             BigInteger result = new BigInteger();
             Stopwatch sWatch = new Stopwatch();
@@ -52,8 +24,11 @@ namespace ArithmeticOfLongNumbers.Operation
 
             sWatch.Stop();
 
-            TotalCalculationTime = sWatch.Elapsed;
-            IncrementOverallProcessingTime(sWatch.Elapsed);
+            stat.CountDivisionOperation++;
+            stat.TotalCalculationTimeDivision += sWatch.Elapsed;
+            stat.AverageCalculationTimeDivision = stat.CalculateAverageTime(stat.TotalCalculationTimeDivision,stat.CountDivisionOperation);
+            stat.IncrementOverallProcessingTime(sWatch.Elapsed);
+            stat.PercentOfOverallProcessingTimeDivision = stat.CalculatePercent(stat.TotalCalculationTimeDivision);
 
             return result;
         }

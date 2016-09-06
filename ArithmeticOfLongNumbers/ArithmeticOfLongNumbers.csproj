@@ -91,9 +91,10 @@
     <Compile Include="Operation\Multiplication.cs" />
     <Compile Include="Operation\Substraction.cs" />
     <Compile Include="Parser\Parsing.cs" />
+    <Compile Include="Utils\MathStatistics.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\PropertyChangedView.cs" />
-    <Page Include="View.xaml">
+    <Compile Include="Model\PropertyChangedClass.cs" />
+    <Page Include="Views\View.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -101,7 +102,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="View.xaml.cs">
+    <Compile Include="Views\View.xaml.cs">
       <DependentUpon>View.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -132,9 +133,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>

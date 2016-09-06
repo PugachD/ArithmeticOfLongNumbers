@@ -6,19 +6,29 @@ using System.Threading.Tasks;
 using System.Windows;
 using ArithmeticOfLongNumbers.Parser;
 using System.Numerics;
+using ArithmeticOfLongNumbers.Utils;
+using ArithmeticOfLongNumbers.ViewModel;
+using System.Threading;
 
 namespace ArithmeticOfLongNumbers.Model
 {
-    class BasicCalculations
+    public class BasicCalculations:PropertyChangedClass
     {
         #region Member Fields
-        private List<StructFileInfo> listStruct = new List<StructFileInfo>();
+        private List<StructFileInfo> listStruct;
+        private MathStatistics statistics;
+        private MainViewModel mainViewModel;
         private Parsing parsing;
         private string[] allLineFile, answerTxtFile;
         private uint countExpression;
         #endregion
 
         #region Properties
+        public MathStatistics Statistics
+        {
+            get { return statistics; }
+            set { statistics = value; OnPropertyChanged("Statistics"); }
+        }
         public string[] GetAnswerTxtFile
         {
             get { return answerTxtFile; }
@@ -27,9 +37,10 @@ namespace ArithmeticOfLongNumbers.Model
         #endregion
 
         #region Constructors
-        public BasicCalculations()
+        public BasicCalculations(MainViewModel _mainViewModel)
         {
             parsing = new Parsing();
+            mainViewModel = _mainViewModel;
         }
         #endregion
 
@@ -38,12 +49,15 @@ namespace ArithmeticOfLongNumbers.Model
         {
             try
             {
+                ResetData();
+
                 allLineFile = _allLinesFile;
                 answerTxtFile = new string[allLineFile.Count()];
                 answerTxtFile[0] = allLineFile[0];
 
                 if (allLineFile == null)
                     throw new NullReferenceException();
+                statistics = mainViewModel.Statistics;
 
                 GetCountStringFile();
                 FillListStructure();
@@ -55,19 +69,24 @@ namespace ArithmeticOfLongNumbers.Model
                 throw new Exception(String.Format("Ошибки в файле: {0}", ex.Message));
             }
 
-            MessageBox.Show("Расчет закончен");
         }
 
         private void EvaluatingTheExpression(StructFileInfo structure)
         {
+            Thread.Sleep(3000);
             string result;
             try
             {
-                string RPN = parsing.GetExpression(structure.expression);
-                result = parsing.Counting(RPN).ToString();
+                lock (statistics)
+                {
+                    string RPN = parsing.GetExpression(structure.expression);
+                    result = parsing.Counting(RPN, ref statistics).ToString();
+                    statistics.InstanceCount += 1;
+                }
             }
             catch (Exception ex)
             {
+                //Записать "Ошибка" в файл
                 result  = "Ошибка";
             }
 
@@ -90,6 +109,12 @@ namespace ArithmeticOfLongNumbers.Model
             countExpression = uint.Parse(allLineFile[0]);
             if (countExpression > (allLineFile.Length - 1))
                 throw new Exception("Количество строк для расчета превышает число строк в файле");
+        }
+
+        private void ResetData()
+        {
+            listStruct = new List<StructFileInfo>();
+            Statistics = null;
         }
         #endregion
     }
