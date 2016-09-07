@@ -185,10 +185,9 @@ namespace ArithmeticOfLongNumbers.ViewModel
                 {
                     FullPathNameTxtFile = file.FullPathNameTxtFile;
                     allLineFile = file.ReadFile(FullPathNameTxtFile);
-                    MaxValueProgressBar = int.Parse(allLineFile[0]);
+                    MaxValueProgressBar = file.CountExpressions;
                     IsEnabledBtnRun = true;
                 }
-
             }
             catch (Exception ex)
             {

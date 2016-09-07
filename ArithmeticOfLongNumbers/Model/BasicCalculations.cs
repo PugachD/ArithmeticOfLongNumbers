@@ -17,7 +17,7 @@ namespace ArithmeticOfLongNumbers.Model
     {
         #region Member Fields
         private DispatcherTimer dispatcherTimer;
-        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,1); //Интервал изменения таймера и обновления некоторой статистики
+        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,222); //Интервал изменения таймера и обновления некоторой статистики
         private List<StructFileInfo> listStruct;
         private MathStatistics statistics;
         private MainViewModel mainViewModel;
@@ -60,17 +60,16 @@ namespace ArithmeticOfLongNumbers.Model
                 allLineFile = _allLinesFile;
                 answerTxtFile = new string[allLineFile.Count()];
                 answerTxtFile[0] = allLineFile[0];
-
-                if (allLineFile == null)
-                    throw new NullReferenceException();
+                countExpression = (uint)mainViewModel.MaxValueProgressBar;
+                
                 statistics = mainViewModel.Statistics;
-
-                GetCountStringFile();
+                
                 FillListStructure();
 
                 dispatcherTimer.Start();
                 Parallel.ForEach(listStruct, EvaluatingTheExpression);
                 dispatcherTimer.Stop();
+                //answerTxtFile[allLineFile.Count()-1] += Environment.NewLine;
             }
             catch (Exception ex)
             {
@@ -112,13 +111,6 @@ namespace ArithmeticOfLongNumbers.Model
             {
                 listStruct.Add(new StructFileInfo(allLineFile[i], i));
             }
-        }
-
-        private void GetCountStringFile()
-        {
-            countExpression = uint.Parse(allLineFile[0]);
-            if (countExpression > (allLineFile.Length - 1))
-                throw new Exception("Количество строк для расчета превышает число строк в файле");
         }
 
         private void dispatcherTimer_Tick(object Sender, EventArgs e)

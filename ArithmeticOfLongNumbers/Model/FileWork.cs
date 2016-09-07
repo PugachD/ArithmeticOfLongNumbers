@@ -13,10 +13,12 @@ namespace ArithmeticOfLongNumbers
     {
         private string nameTxtFile;
         private string nameNewTxtFile;
+        private int countExpressions;
+        private string[] textFile;
 
         public string FullPathNameTxtFile { get; set; }
         public string NameNewTxtFile { get { return nameNewTxtFile; } set {nameNewTxtFile = value; } }
-
+        public int CountExpressions { get { return countExpressions; } private set { countExpressions = value; } }
 
         public bool OpenFile ()
         {
@@ -57,10 +59,14 @@ namespace ArithmeticOfLongNumbers
 
         public string[] ReadFile(string nameFile)
         {
-            string[] textFile;
+            
             try
             {
                 textFile = File.ReadAllLines(nameFile, System.Text.Encoding.Default);
+                if (textFile.Length < 2)
+                    throw new ArgumentNullException("Файл пустой или неполный");
+                CountExpressions = GetCountExpressions();
+                CheckedForErrorsFile();
             }
             catch (IOException ex)
             {
@@ -69,6 +75,18 @@ namespace ArithmeticOfLongNumbers
             }
             return textFile;
         }
+
+        public void CheckedForErrorsFile()
+        {
+            if (countExpressions > 1000000)
+                throw new OverflowException("Задано недопустимое количество выражений");
+            if (countExpressions > (textFile.Length - 1))
+                throw new OverflowException("Количество строк для расчета превышает число строк в файле");
+        }
         
+        private int GetCountExpressions()
+        {
+            return int.Parse(textFile[0]);
+        }
     }
 }
