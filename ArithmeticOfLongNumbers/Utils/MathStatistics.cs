@@ -66,7 +66,8 @@ namespace ArithmeticOfLongNumbers.Utils
         public TimeSpan OverallProcessingTime
         {
             get { return overallProcessingTime; }
-            set { overallProcessingTime = value; OnPropertyChanged("OverallProcessingTime"); }
+            set
+            { overallProcessingTime = value; UpdateStatPercantOfOverall(); OnPropertyChanged("OverallProcessingTime"); }
         }
 
         public double PercentOfOverallProcessingTimeAddition
@@ -192,6 +193,7 @@ namespace ArithmeticOfLongNumbers.Utils
         public void IncrementOverallProcessingTime(TimeSpan value)
         {
             OverallProcessingTime += value;
+
         }
         public double CalculatePercent(TimeSpan value)
         {
@@ -200,6 +202,15 @@ namespace ArithmeticOfLongNumbers.Utils
         public TimeSpan CalculateAverageTime(TimeSpan value, int countOperation)
         {
             return (new TimeSpan((long)(value.Ticks / (double)countOperation)));
+        }
+
+        private void UpdateStatPercantOfOverall()
+        {
+            PercentOfOverallProcessingTimeAddition = CalculatePercent(TotalCalculationTimeAddition);
+            PercentOfOverallProcessingTimeDivision = CalculatePercent(TotalCalculationTimeDivision);
+            PercentOfOverallProcessingTimeMultiplication = CalculatePercent(TotalCalculationTimeMultiplication);
+            PercentOfOverallProcessingTimeSubstraction = CalculatePercent(TotalCalculationTimeSubstraction);
+            PercentOfOverallProcessingTimeUnaryNegative = CalculatePercent(TotalCalculationTimeUnaryNegative);
         }
     }
 }

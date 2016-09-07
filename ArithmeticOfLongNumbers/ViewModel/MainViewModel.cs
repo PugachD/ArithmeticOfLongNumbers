@@ -239,7 +239,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
             BackgroundWorker worker = sender as BackgroundWorker;
                 try
                 {
-                    basicCalculate.RunCalc(allLineFile);
+                    basicCalculate.RunCalculation(allLineFile);
                     file.SaveFile(basicCalculate.GetAnswerTxtFile);
                     worker.ReportProgress(0);
                 }

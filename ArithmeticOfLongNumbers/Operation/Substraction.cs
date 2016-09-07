@@ -29,7 +29,6 @@ namespace ArithmeticOfLongNumbers.Operation
             stat.TotalCalculationTimeSubstraction += sWatch.Elapsed;
             stat.AverageCalculationTimeSubstraction = stat.CalculateAverageTime(stat.TotalCalculationTimeSubstraction, stat.CountSubstractionOperation);
             stat.IncrementOverallProcessingTime(sWatch.Elapsed);
-            stat.PercentOfOverallProcessingTimeSubstraction = stat.CalculatePercent(stat.TotalCalculationTimeSubstraction);
 
             return result;
         }

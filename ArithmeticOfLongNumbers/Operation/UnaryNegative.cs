@@ -28,7 +28,6 @@ namespace ArithmeticOfLongNumbers.Operation
             stat.TotalCalculationTimeUnaryNegative += sWatch.Elapsed;
             stat.AverageCalculationTimeUnaryNegative = stat.CalculateAverageTime(stat.TotalCalculationTimeUnaryNegative,stat.CountUnaryNegativeOperation);
             stat.IncrementOverallProcessingTime(sWatch.Elapsed);
-            stat.PercentOfOverallProcessingTimeUnaryNegative = stat.CalculatePercent(stat.TotalCalculationTimeUnaryNegative);
 
             return result;
         }

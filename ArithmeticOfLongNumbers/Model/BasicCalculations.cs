@@ -9,12 +9,15 @@ using System.Numerics;
 using ArithmeticOfLongNumbers.Utils;
 using ArithmeticOfLongNumbers.ViewModel;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace ArithmeticOfLongNumbers.Model
 {
     public class BasicCalculations:PropertyChangedClass
     {
         #region Member Fields
+        //private DispatcherTimer dispatcherTimer;
+        //private TimeSpan timerInterval = new TimeSpan(0,0,0,0,100);
         private List<StructFileInfo> listStruct;
         private MathStatistics statistics;
         private MainViewModel mainViewModel;
@@ -41,11 +44,14 @@ namespace ArithmeticOfLongNumbers.Model
         {
             parsing = new Parsing();
             mainViewModel = _mainViewModel;
+            /*dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Interval = timerInterval;
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);*/
         }
         #endregion
 
         #region Functions
-        public void RunCalc(string[] _allLinesFile)
+        public void RunCalculation(string[] _allLinesFile)
         {
             try
             {
@@ -62,7 +68,9 @@ namespace ArithmeticOfLongNumbers.Model
                 GetCountStringFile();
                 FillListStructure();
 
+                //dispatcherTimer.Start();
                 Parallel.ForEach(listStruct, EvaluatingTheExpression);
+                //dispatcherTimer.Stop();
             }
             catch (Exception ex)
             {
@@ -111,11 +119,17 @@ namespace ArithmeticOfLongNumbers.Model
                 throw new Exception("Количество строк для расчета превышает число строк в файле");
         }
 
+        /*private void dispatcherTimer_Tick(object Sender, EventArgs e)
+        {
+            Statistics.IncrementOverallProcessingTime(timerInterval);
+        }*/
+
         private void ResetData()
         {
             listStruct = new List<StructFileInfo>();
             Statistics = null;
         }
+
         #endregion
     }
 }
