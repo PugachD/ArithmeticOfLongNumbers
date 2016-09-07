@@ -77,7 +77,7 @@ namespace ArithmeticOfLongNumbers.Utils
         /// </summary>
         public TimeSpan OverallProcessingTime
         {
-            get { return TimeSpan.FromMilliseconds(Math.Round(overallProcessingTime.TotalMilliseconds,4)); }
+            get { return overallProcessingTime; }
             set
             { overallProcessingTime = value; UpdateStatPercantOfOverall(); OnPropertyChanged("OverallProcessingTime"); }
         }

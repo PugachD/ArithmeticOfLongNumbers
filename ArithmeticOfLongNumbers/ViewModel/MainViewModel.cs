@@ -249,18 +249,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
                 }
 
         }
-
-        /// <summary>
-        /// This worker_ProgressChanged function is not in use for this project. Thanks to INotifyPropertyChanged, this is
-        /// completely unnecessary.
-        /// </summary>
-        /// <param name="sender">The worker as Object, but it can be cast to a worker.</param>
-        /// <param name="e">The ProgressChangedEventArgs object.</param>
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            // Does nothing yet
-            throw new NotImplementedException();
-        }
+        
 
         /// <summary>
         /// This worker_RunWorkerCompleted is called when the worker is finished.
@@ -272,7 +261,10 @@ namespace ArithmeticOfLongNumbers.ViewModel
             IsNameButtonAfterRun = false;
             IsEnabledBtnOpenFile = true;
             Statistics.PredictionOfRemainingTime = new TimeSpan(0);
-            MessageBox.Show("Данные записаны в файл: " + file.NameNewTxtFile);
+            if (e.Cancelled)
+                MessageBox.Show("Подсчет остановлен");
+            else
+                MessageBox.Show("Данные записаны в файл: " + file.NameNewTxtFile);
         }
 
         /// <summary>
@@ -287,6 +279,10 @@ namespace ArithmeticOfLongNumbers.ViewModel
             //Value = Min;
         }
         
+        public bool CancellationPending()
+        {
+            return bgWorkerCalculation.CancellationPending;
+        }
         #endregion
     }
 }

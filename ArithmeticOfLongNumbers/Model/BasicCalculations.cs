@@ -17,7 +17,7 @@ namespace ArithmeticOfLongNumbers.Model
     {
         #region Member Fields
         private DispatcherTimer dispatcherTimer;
-        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,500); //Интервал изменения таймера и обновления некоторой статистики
+        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,1); //Интервал изменения таймера и обновления некоторой статистики
         private List<StructFileInfo> listStruct;
         private MathStatistics statistics;
         private MainViewModel mainViewModel;
@@ -81,26 +81,28 @@ namespace ArithmeticOfLongNumbers.Model
 
         private void EvaluatingTheExpression(StructFileInfo structure)
         {
-            Thread.Sleep(3000);
-            string result;
-            try
+            if (!mainViewModel.CancellationPending())
             {
-                lock (statistics)
+                string result;
+                try
                 {
-                    string RPN = parsing.GetExpression(structure.expression);
-                    result = parsing.Counting(RPN, ref statistics).ToString();
-                    statistics.InstanceCount += 1;
+                    lock (statistics)
+                    {
+                        string RPN = parsing.GetExpression(structure.expression);
+                        result = parsing.Counting(RPN, ref statistics).ToString();
+                        statistics.InstanceCount += 1;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                //Записать "Ошибка" в файл
-                result  = "Ошибка";
-            }
+                catch (Exception ex)
+                {
+                    //Записать "Ошибка" в файл
+                    result = "Ошибка";
+                }
 
-            lock (answerTxtFile)
-            {
-                answerTxtFile[structure.numberString] = result;
+                lock (answerTxtFile)
+                {
+                    answerTxtFile[structure.numberString] = result;
+                }
             }
         }
 
