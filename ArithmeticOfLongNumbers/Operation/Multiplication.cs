@@ -27,7 +27,7 @@ namespace ArithmeticOfLongNumbers.Operation
             stat.CountMultiplicationOperation++;
             stat.TotalCalculationTimeMultiplication += sWatch.Elapsed;
             stat.AverageCalculationTimeMultiplication = stat.CalculateAverageTime(stat.TotalCalculationTimeMultiplication,stat.CountMultiplicationOperation);
-            stat.IncrementOverallProcessingTime(sWatch.Elapsed);
+            //stat.IncrementOverallProcessingTime(sWatch.Elapsed);
 
             return result;
         }

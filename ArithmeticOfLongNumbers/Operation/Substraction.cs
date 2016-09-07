@@ -28,7 +28,7 @@ namespace ArithmeticOfLongNumbers.Operation
             stat.CountSubstractionOperation++;
             stat.TotalCalculationTimeSubstraction += sWatch.Elapsed;
             stat.AverageCalculationTimeSubstraction = stat.CalculateAverageTime(stat.TotalCalculationTimeSubstraction, stat.CountSubstractionOperation);
-            stat.IncrementOverallProcessingTime(sWatch.Elapsed);
+            //stat.IncrementOverallProcessingTime(sWatch.Elapsed);
 
             return result;
         }

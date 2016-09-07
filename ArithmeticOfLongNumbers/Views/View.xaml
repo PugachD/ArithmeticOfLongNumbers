@@ -65,7 +65,7 @@
                     <Label Grid.Column="1" Grid.Row="0" Content="Количество обработанных выражений"></Label>
                     <TextBlock x:Name="textBoxNumberOfProcessedExpr" Text="{Binding Path=Statistics.InstanceCount}" Grid.Row="1" Grid.Column="1"/>
                     <Label Grid.Column="2" Grid.Row="0" Content="Прогноз остатка времени обработки"/>
-                    <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Grid.Row="1" Grid.Column="2"/>
+                    <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Text="{Binding Path=Statistics.PredictionOfRemainingTime}" Grid.Row="1" Grid.Column="2"/>
                 </Grid>
             </StackPanel>
             <Grid x:Name="grid" DockPanel.Dock="Left">

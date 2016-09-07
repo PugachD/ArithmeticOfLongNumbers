@@ -16,8 +16,8 @@ namespace ArithmeticOfLongNumbers.Model
     public class BasicCalculations:PropertyChangedClass
     {
         #region Member Fields
-        //private DispatcherTimer dispatcherTimer;
-        //private TimeSpan timerInterval = new TimeSpan(0,0,0,0,100);
+        private DispatcherTimer dispatcherTimer;
+        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,500); //Интервал изменения таймера и обновления некоторой статистики
         private List<StructFileInfo> listStruct;
         private MathStatistics statistics;
         private MainViewModel mainViewModel;
@@ -44,9 +44,9 @@ namespace ArithmeticOfLongNumbers.Model
         {
             parsing = new Parsing();
             mainViewModel = _mainViewModel;
-            /*dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = timerInterval;
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);*/
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
         }
         #endregion
 
@@ -68,9 +68,9 @@ namespace ArithmeticOfLongNumbers.Model
                 GetCountStringFile();
                 FillListStructure();
 
-                //dispatcherTimer.Start();
+                dispatcherTimer.Start();
                 Parallel.ForEach(listStruct, EvaluatingTheExpression);
-                //dispatcherTimer.Stop();
+                dispatcherTimer.Stop();
             }
             catch (Exception ex)
             {
@@ -119,10 +119,13 @@ namespace ArithmeticOfLongNumbers.Model
                 throw new Exception("Количество строк для расчета превышает число строк в файле");
         }
 
-        /*private void dispatcherTimer_Tick(object Sender, EventArgs e)
+        private void dispatcherTimer_Tick(object Sender, EventArgs e)
         {
-            Statistics.IncrementOverallProcessingTime(timerInterval);
-        }*/
+            lock (Statistics)
+            {
+                Statistics.IncrementOverallProcessingTime(timerInterval);
+            }
+        }
 
         private void ResetData()
         {

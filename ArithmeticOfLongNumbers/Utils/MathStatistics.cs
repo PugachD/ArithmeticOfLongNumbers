@@ -9,6 +9,7 @@ namespace ArithmeticOfLongNumbers.Utils
         #region  Member Fields
         private double instanceCount;
         private TimeSpan overallProcessingTime;
+        private TimeSpan predictionOfRemainingTime;
 
         #region Addition Operation
         private int countAdditionOperation;
@@ -54,45 +55,56 @@ namespace ArithmeticOfLongNumbers.Utils
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Количество выражений в файле
+        /// </summary>
+        public int CountExpressionInFile { get; set; }
+        /// <summary>
+        /// Число экземпляров Expression (Общее число операторов)
+        /// </summary>
         public double InstanceCount
         {
             get { return instanceCount; }
             set { instanceCount = value; OnPropertyChanged("InstanceCount"); }
+        }
+        public TimeSpan PredictionOfRemainingTime
+        {
+            get { return predictionOfRemainingTime; }
+            set { predictionOfRemainingTime = value; OnPropertyChanged("PredictionOfRemainingTime"); }
         }
         /// <summary>
         /// Общее время обработки всех операций всех операторов
         /// </summary>
         public TimeSpan OverallProcessingTime
         {
-            get { return overallProcessingTime; }
+            get { return TimeSpan.FromMilliseconds(Math.Round(overallProcessingTime.TotalMilliseconds,4)); }
             set
             { overallProcessingTime = value; UpdateStatPercantOfOverall(); OnPropertyChanged("OverallProcessingTime"); }
         }
 
         public double PercentOfOverallProcessingTimeAddition
         {
-            get { return Math.Round(percentOfOverallProcessingTimeAddition, 2); }
+            get { return Math.Round(percentOfOverallProcessingTimeAddition, 6); }
             set { percentOfOverallProcessingTimeAddition = value; OnPropertyChanged("PercentOfOverallProcessingTimeAddition"); }
         }
         public double PercentOfOverallProcessingTimeDivision
         {
-            get { return Math.Round(percentOfOverallProcessingTimeDivision, 2); }
+            get { return Math.Round(percentOfOverallProcessingTimeDivision, 6); }
             set { percentOfOverallProcessingTimeDivision = value; OnPropertyChanged("PercentOfOverallProcessingTimeDivision"); }
         }
         public double PercentOfOverallProcessingTimeMultiplication
         {
-            get { return Math.Round(percentOfOverallProcessingTimeMultiplication, 2); }
+            get { return Math.Round(percentOfOverallProcessingTimeMultiplication, 6); }
             set { percentOfOverallProcessingTimeMultiplication = value; OnPropertyChanged("PercentOfOverallProcessingTimeMultiplication"); }
         }
         public double PercentOfOverallProcessingTimeSubstraction
         {
-            get { return Math.Round(percentOfOverallProcessingTimeSubstraction, 2); }
+            get { return Math.Round(percentOfOverallProcessingTimeSubstraction, 6); }
             set { percentOfOverallProcessingTimeSubstraction = value; OnPropertyChanged("PercentOfOverallProcessingTimeSubstraction"); }
         }
         public double PercentOfOverallProcessingTimeUnaryNegative
         {
-            get { return Math.Round(percentOfOverallProcessingTimeUnaryNegative, 2); }
+            get { return Math.Round(percentOfOverallProcessingTimeUnaryNegative, 6); }
             set { percentOfOverallProcessingTimeUnaryNegative = value; OnPropertyChanged("PercentOfOverallProcessingTimeUnaryNegative"); }
         }
         /// <summary>
@@ -211,6 +223,7 @@ namespace ArithmeticOfLongNumbers.Utils
             PercentOfOverallProcessingTimeMultiplication = CalculatePercent(TotalCalculationTimeMultiplication);
             PercentOfOverallProcessingTimeSubstraction = CalculatePercent(TotalCalculationTimeSubstraction);
             PercentOfOverallProcessingTimeUnaryNegative = CalculatePercent(TotalCalculationTimeUnaryNegative);
+            PredictionOfRemainingTime = new TimeSpan((long)((OverallProcessingTime.Ticks/ InstanceCount) * (CountExpressionInFile - (int)InstanceCount)));
         }
     }
 }

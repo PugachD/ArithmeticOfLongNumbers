@@ -206,10 +206,10 @@ namespace ArithmeticOfLongNumbers.ViewModel
                 IsEnabledBtnOpenFile = false;
                 if (!IsNameButtonAfterRun)
                 {
-                    Statistics = new MathStatistics();
                     IsNameButtonAfterRun = !IsNameButtonAfterRun;
 
                     Reset();
+                    Statistics.CountExpressionInFile = MaxValueProgressBar;
                     bgWorkerCalculation = new BackgroundWorker() { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
                     bgWorkerCalculation.DoWork += new DoWorkEventHandler(worker_DoRunCalculation);
                 
@@ -271,6 +271,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
         {
             IsNameButtonAfterRun = false;
             IsEnabledBtnOpenFile = true;
+            Statistics.PredictionOfRemainingTime = new TimeSpan(0);
             MessageBox.Show("Данные записаны в файл: " + file.NameNewTxtFile);
         }
 
