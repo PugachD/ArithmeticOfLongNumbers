@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define Timer
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using ArithmeticOfLongNumbers.Utils;
 using ArithmeticOfLongNumbers.ViewModel;
 using System.Threading;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace ArithmeticOfLongNumbers.Model
 {
@@ -17,21 +19,15 @@ namespace ArithmeticOfLongNumbers.Model
     {
         #region Member Fields
         private DispatcherTimer dispatcherTimer;
-        private TimeSpan timerInterval = new TimeSpan(0,0,0,0,222); //Интервал изменения таймера и обновления некоторой статистики
+        private TimeSpan timerInterval = new TimeSpan(0, 0, 0, 0, 1000); //Интервал изменения таймера и обновления некоторой статистики
+        private Stopwatch stWatch;
         private List<StructFileInfo> listStruct;
-        private MathStatistics statistics;
         private MainViewModel mainViewModel;
-        private Parsing parsing;
         private string[] allLineFile, answerTxtFile;
         private uint countExpression;
         #endregion
 
         #region Properties
-        public MathStatistics Statistics
-        {
-            get { return statistics; }
-            set { statistics = value; OnPropertyChanged("Statistics"); }
-        }
         public string[] GetAnswerTxtFile
         {
             get { return answerTxtFile; }
@@ -42,15 +38,16 @@ namespace ArithmeticOfLongNumbers.Model
         #region Constructors
         public BasicCalculations(MainViewModel _mainViewModel)
         {
-            parsing = new Parsing();
             mainViewModel = _mainViewModel;
+#if Timer
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = timerInterval;
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+#endif
         }
-        #endregion
+#endregion
 
-        #region Functions
+#region Functions
         public void RunCalculation(string[] _allLinesFile)
         {
             try
@@ -60,16 +57,19 @@ namespace ArithmeticOfLongNumbers.Model
                 allLineFile = _allLinesFile;
                 answerTxtFile = new string[allLineFile.Count()];
                 answerTxtFile[0] = allLineFile[0];
-                countExpression = (uint)mainViewModel.MaxValueProgressBar;
-                
-                statistics = mainViewModel.Statistics;
-                
+                countExpression = (uint)CommonStats.Reference.CountExpressionInFile;
+               
                 FillListStructure();
-
+#if Timer
                 dispatcherTimer.Start();
+                stWatch.Start();
+#endif
                 Parallel.ForEach(listStruct, EvaluatingTheExpression);
+#if Timer
                 dispatcherTimer.Stop();
-                //answerTxtFile[allLineFile.Count()-1] += Environment.NewLine;
+                stWatch.Stop();
+#endif
+                dispatcherTimer_Tick(null, null);
             }
             catch (Exception ex)
             {
@@ -82,14 +82,16 @@ namespace ArithmeticOfLongNumbers.Model
         {
             if (!mainViewModel.CancellationPending())
             {
-                string result;
+                string result = "";
                 try
                 {
-                    lock (statistics)
+                    Parsing parsing = new Parsing();
+                    parsing.GetExpression(structure.expression);
+                    result = parsing.Counting().ToString();
+                    //lock (CommonStats.Reference)
                     {
-                        string RPN = parsing.GetExpression(structure.expression);
-                        result = parsing.Counting(RPN, ref statistics).ToString();
-                        statistics.InstanceCount += 1;
+                        Interlocked.Increment(ref CommonStats.Reference.instanceCount);
+                        //CommonStats.Reference.InstanceCount += 1;
                     }
                 }
                 catch (Exception ex)
@@ -102,6 +104,7 @@ namespace ArithmeticOfLongNumbers.Model
                 {
                     answerTxtFile[structure.numberString] = result;
                 }
+                result = null;
             }
         }
 
@@ -115,18 +118,18 @@ namespace ArithmeticOfLongNumbers.Model
 
         private void dispatcherTimer_Tick(object Sender, EventArgs e)
         {
-            lock (Statistics)
+            lock (CommonStats.Reference)
             {
-                Statistics.IncrementOverallProcessingTime(timerInterval);
+                CommonStats.Reference.OverallProcessingTime = stWatch.Elapsed;
             }
         }
 
         private void ResetData()
         {
             listStruct = new List<StructFileInfo>();
-            Statistics = null;
+            stWatch = new Stopwatch();
         }
 
-        #endregion
+#endregion
     }
 }

@@ -1,35 +1,34 @@
-﻿using ArithmeticOfLongNumbers.Utils;
+﻿#define Timer
+using ArithmeticOfLongNumbers.Utils;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 
 namespace ArithmeticOfLongNumbers.Operation
 {
-    public class UnaryNegative : Expression
+    public sealed class UnaryNegative : Expression
     {
-        public UnaryNegative():base()
-        {
-        }
 
-        public UnaryNegative(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2)
+        public UnaryNegative(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2) { }
+
+        public override BigInteger Operator()
         {
-        }
-        public override BigInteger Operator(ref MathStatistics stat)
-        {
-            BigInteger result = new BigInteger();
+#if Timer
             Stopwatch sWatch = new Stopwatch();
             sWatch.Start();
+#endif
+            number1 = -number2;
 
-            result = -number2;
-
+#if Timer
             sWatch.Stop();
 
-            stat.CountUnaryNegativeOperation++;
-            stat.TotalCalculationTimeUnaryNegative += sWatch.Elapsed;
-            stat.AverageCalculationTimeUnaryNegative = stat.CalculateAverageTime(stat.TotalCalculationTimeUnaryNegative,stat.CountUnaryNegativeOperation);
-           // stat.IncrementOverallProcessingTime(sWatch.Elapsed);
-
-            return result;
+            Interlocked.Increment(ref UnaryNegativeStats.Reference.countOperation);
+            lock (UnaryNegativeStats.Reference)
+                UnaryNegativeStats.Reference.totalCalculationTime += sWatch.Elapsed;
+#endif
+            sWatch = null;
+            return number1;
         }
     }
 }

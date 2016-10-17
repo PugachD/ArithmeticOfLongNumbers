@@ -1,34 +1,30 @@
-﻿using System;
+﻿#define Timer
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using ArithmeticOfLongNumbers.Utils;
+using System.Threading;
 
 namespace ArithmeticOfLongNumbers.Operation
 {
-    public class Addition : Expression
+    public sealed class Addition : Expression
     {
-        public Addition():base()
-        {
-        }
-        public Addition(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2)
-        {
-        }
+        public Addition(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2) { }
 
-        public override BigInteger Operator(ref MathStatistics stat)
+        public override BigInteger Operator()
         {
-            BigInteger result = new BigInteger();
-            Stopwatch sWatch = new Stopwatch();
-            sWatch.Start();
-
-            result = number1 + number2;
-
+#if Timer
+            Stopwatch sWatch = Stopwatch.StartNew();
+#endif
+            number1 = number1 + number2;
+#if Timer
             sWatch.Stop();
-
-            stat.CountAdditionOperation++;
-            stat.TotalCalculationTimeAddition += sWatch.Elapsed;
-            stat.AverageCalculationTimeAddition = stat.CalculateAverageTime(stat.TotalCalculationTimeAddition, stat.CountAdditionOperation);
-            //stat.IncrementOverallProcessingTime(sWatch.Elapsed);
-            return result;
+            Interlocked.Increment(ref AdditionStats.Reference.countOperation);
+            lock (AdditionStats.Reference)
+                AdditionStats.Reference.totalCalculationTime += sWatch.Elapsed;
+#endif
+            sWatch = null;
+            return number1;
         }
     }
 }

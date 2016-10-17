@@ -1,35 +1,34 @@
-﻿using ArithmeticOfLongNumbers.Utils;
+﻿#define Timer
+using ArithmeticOfLongNumbers.Utils;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 
 namespace ArithmeticOfLongNumbers.Operation
 {
-    public class Division : Expression
+    public sealed class Division : Expression
     {
-        public Division():base()
-        {
-        }
-        public Division(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2)
-        {
-        }
+        public Division(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2) { }
 
-        public override BigInteger Operator(ref MathStatistics stat)
+        public override BigInteger Operator()
         {
-            BigInteger result = new BigInteger();
+#if Timer
             Stopwatch sWatch = new Stopwatch();
             sWatch.Start();
+#endif
+            number1 = number1 / number2;
 
-            result = number1 / number2;
-
+#if Timer
             sWatch.Stop();
+            Interlocked.Increment(ref DivisionStats.Reference.countOperation);
+            lock (DivisionStats.Reference)
+                DivisionStats.Reference.totalCalculationTime += sWatch.Elapsed;
 
-            stat.CountDivisionOperation++;
-            stat.TotalCalculationTimeDivision += sWatch.Elapsed;
-            stat.AverageCalculationTimeDivision = stat.CalculateAverageTime(stat.TotalCalculationTimeDivision,stat.CountDivisionOperation);
-           /// stat.IncrementOverallProcessingTime(sWatch.Elapsed);
+            sWatch = null;
+#endif
 
-            return result;
+            return number1;
         }
     }
 }

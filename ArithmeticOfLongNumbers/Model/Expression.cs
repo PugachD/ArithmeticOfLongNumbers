@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Numerics;
+﻿using System.Numerics;
 using ArithmeticOfLongNumbers.Interface;
 using ArithmeticOfLongNumbers.Utils;
 
@@ -10,28 +8,6 @@ namespace ArithmeticOfLongNumbers
     {
         protected BigInteger number1;
         protected BigInteger number2;
-        
-        private static MathStatistics statistics;
-
-        public static void InitializeStat(MathStatistics _statistics)
-        {
-            statistics = _statistics;
-        }
-
-        public static void ResetInstanceStatistic()
-        {
-            statistics = null;
-        }
-
-
-        /*static Expression()
-        {
-            overallProcessingTime = new TimeSpan();
-        }*/
-
-        public Expression()
-        {
-        }
 
         public Expression(BigInteger lhs, BigInteger rhs)
         {
@@ -39,6 +15,6 @@ namespace ArithmeticOfLongNumbers
             number2 = rhs;
         }
 
-        public abstract BigInteger Operator(ref MathStatistics stat);
+        public abstract BigInteger Operator();
     }
 }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArithmeticOfLongNumbers.ViewModel"
         xmlns:model="clr-namespace:ArithmeticOfLongNumbers.Model"
+        xmlns:stats="clr-namespace:ArithmeticOfLongNumbers.Utils"
         mc:Ignorable="d"
         Title="Арифметика длинных чисел" Height="350" Width="525" WindowStartupLocation="CenterOwner" WindowState="Maximized">
     <Grid>
@@ -50,7 +51,7 @@
         </Grid>
         <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <StackPanel DockPanel.Dock="Bottom" Margin="0,5,0,0">
-                <Grid >
+                <Grid DataContext="{Binding Source={x:Static stats:CommonStats.Reference}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
@@ -61,11 +62,11 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Label Content="Время работы"></Label>
-                    <TextBlock x:Name="textBoxTimeWork" Text="{Binding Path=Statistics.OverallProcessingTime, StringFormat=hh\\:mm\\:ss\\:fff}" Grid.Row="1" Grid.Column="0"/>
+                    <TextBlock x:Name="textBoxTimeWork" Text="{Binding Path=OverallProcessingTime, StringFormat=hh\\:mm\\:ss\\:fff}" Grid.Row="1" Grid.Column="0"/>
                     <Label Grid.Column="1" Grid.Row="0" Content="Количество обработанных выражений"></Label>
-                    <TextBlock x:Name="textBoxNumberOfProcessedExpr" Text="{Binding Path=Statistics.InstanceCount}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock x:Name="textBoxNumberOfProcessedExpr" Text="{Binding Path=InstanceCount}" Grid.Row="1" Grid.Column="1"/>
                     <Label Grid.Column="2" Grid.Row="0" Content="Прогноз остатка времени обработки"/>
-                    <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Text="{Binding Path=Statistics.PredictionOfRemainingTime, StringFormat=hh\\:mm\\:ss\\:fffff}" Grid.Row="1" Grid.Column="2"/>
+                    <TextBlock x:Name="textBoxPredictionOfRemainingProcessingTime" Text="{Binding Path=PredictionOfRemainingTime, StringFormat=hh\\:mm\\:ss\\:fffff}" Grid.Row="1" Grid.Column="2"/>
                 </Grid>
             </StackPanel>
             <Grid x:Name="grid" DockPanel.Dock="Left" ShowGridLines="True" Background="AliceBlue">
@@ -78,11 +79,11 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Rectangle Grid.Column="0" Grid.Row="0" Fill="#8B9198" />
                 <Label Grid.Row="0" Grid.Column="0" Content="Операция"></Label>
@@ -94,40 +95,40 @@
 
                 <Rectangle Grid.Column="1" Grid.Row="0" Fill="#8B9198" />
                 <Label Grid.Row="0" Grid.Column="1" Content="Количество вычислений"></Label>
-                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Statistics.CountAdditionOperation}"></Label>
-                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Statistics.CountSubstractionOperation}"></Label>
-                <Label Grid.Row="3" Grid.Column="1" Content="{Binding Statistics.CountMultiplicationOperation}"></Label>
-                <Label Grid.Row="4" Grid.Column="1" Content="{Binding Statistics.CountDivisionOperation}"></Label>
-                <Label Grid.Row="5" Grid.Column="1" Content="{Binding Statistics.CountUnaryNegativeOperation}"></Label>
+                <Label Grid.Row="1" Grid.Column="1" DataContext="{Binding Source={x:Static stats:AdditionStats.Reference}}" Content="{Binding Path=CountOperation}"></Label>
+                <Label Grid.Row="2" Grid.Column="1" DataContext="{Binding Source={x:Static stats:SubstractionStats.Reference}}" Content="{Binding Path=CountOperation}"></Label>
+                <Label Grid.Row="3" Grid.Column="1" DataContext="{Binding Source={x:Static stats:MultiplicationStats.Reference}}" Content="{Binding Path=CountOperation}"></Label>
+                <Label Grid.Row="4" Grid.Column="1" DataContext="{Binding Source={x:Static stats:DivisionStats.Reference}}" Content="{Binding CountOperation}"></Label>
+                <Label Grid.Row="5" Grid.Column="1" DataContext="{Binding Source={x:Static stats:UnaryNegativeStats.Reference}}" Content="{Binding CountOperation}"></Label>
 
                 <Rectangle Grid.Column="2" Grid.Row="0" Fill="#8B9198" />
                 <Label Grid.Row="0" Grid.Column="2" Content="Общее время вычисления"></Label>
-                <Label Grid.Row="1" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeAddition}"></Label>
-                <Label Grid.Row="2" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeSubstraction}"></Label>
-                <Label Grid.Row="3" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeMultiplication}"></Label>
-                <Label Grid.Row="4" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeDivision}"></Label>
-                <Label Grid.Row="5" Grid.Column="2" Content="{Binding Statistics.TotalCalculationTimeUnaryNegative}"></Label>
+                <Label Grid.Row="1" Grid.Column="2" DataContext="{Binding Source={x:Static stats:AdditionStats.Reference}}" Content="{Binding TotalCalculationTime}"></Label>
+                <Label Grid.Row="2" Grid.Column="2" DataContext="{Binding Source={x:Static stats:SubstractionStats.Reference}}" Content="{Binding TotalCalculationTime}"></Label>
+                <Label Grid.Row="3" Grid.Column="2" DataContext="{Binding Source={x:Static stats:MultiplicationStats.Reference}}" Content="{Binding TotalCalculationTime}"></Label>
+                <Label Grid.Row="4" Grid.Column="2" DataContext="{Binding Source={x:Static stats:DivisionStats.Reference}}" Content="{Binding TotalCalculationTime}"></Label>
+                <Label Grid.Row="5" Grid.Column="2" DataContext="{Binding Source={x:Static stats:UnaryNegativeStats.Reference}}" Content="{Binding TotalCalculationTime}"></Label>
 
                 <Rectangle Grid.Column="3" Grid.Row="0" Fill="#8B9198" />
                 <Label Grid.Row="0" Grid.Column="3" Content="Среднее время вычисления"></Label>
-                <Label Grid.Row="1" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeAddition}"></Label>
-                <Label Grid.Row="2" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeSubstraction}"></Label>
-                <Label Grid.Row="3" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeMultiplication}"></Label>
-                <Label Grid.Row="4" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeDivision}"></Label>
-                <Label Grid.Row="5" Grid.Column="3" Content="{Binding Statistics.AverageCalculationTimeUnaryNegative}"></Label>
+                <Label Grid.Row="1" Grid.Column="3" DataContext="{Binding Source={x:Static stats:AdditionStats.Reference}}" Content="{Binding AverageCalculationTime}"></Label>
+                <Label Grid.Row="2" Grid.Column="3" DataContext="{Binding Source={x:Static stats:SubstractionStats.Reference}}" Content="{Binding AverageCalculationTime}"></Label>
+                <Label Grid.Row="3" Grid.Column="3" DataContext="{Binding Source={x:Static stats:MultiplicationStats.Reference}}" Content="{Binding AverageCalculationTime}"></Label>
+                <Label Grid.Row="4" Grid.Column="3" DataContext="{Binding Source={x:Static stats:DivisionStats.Reference}}" Content="{Binding AverageCalculationTime}"></Label>
+                <Label Grid.Row="5" Grid.Column="3" DataContext="{Binding Source={x:Static stats:UnaryNegativeStats.Reference}}" Content="{Binding AverageCalculationTime}"></Label>
 
                 <Rectangle Grid.Column="4" Grid.Row="0" Fill="#8B9198" />
                 <Label Grid.Row="0" Grid.Column="4" Content="Процент от общего времени" ></Label>
-                <Label Grid.Row="1" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeAddition}"></Label>
-                <Label Grid.Row="2" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeSubstraction}"></Label>
-                <Label Grid.Row="3" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeMultiplication}"></Label>
-                <Label Grid.Row="4" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeDivision}"></Label>
-                <Label Grid.Row="5" Grid.Column="4" Content="{Binding Statistics.PercentOfOverallProcessingTimeUnaryNegative}"></Label>
+                <Label Grid.Row="1" Grid.Column="4" DataContext="{Binding Source={x:Static stats:AdditionStats.Reference}}" Content="{Binding PercentOfOverallProcessingTime}"></Label>
+                <Label Grid.Row="2" Grid.Column="4" DataContext="{Binding Source={x:Static stats:SubstractionStats.Reference}}" Content="{Binding PercentOfOverallProcessingTime}"></Label>
+                <Label Grid.Row="3" Grid.Column="4" DataContext="{Binding Source={x:Static stats:MultiplicationStats.Reference}}" Content="{Binding PercentOfOverallProcessingTime}"></Label>
+                <Label Grid.Row="4" Grid.Column="4" DataContext="{Binding Source={x:Static stats:DivisionStats.Reference}}" Content="{Binding PercentOfOverallProcessingTime}"></Label>
+                <Label Grid.Row="5" Grid.Column="4" DataContext="{Binding Source={x:Static stats:UnaryNegativeStats.Reference}}" Content="{Binding PercentOfOverallProcessingTime}"></Label>
                 
             </Grid>
         </DockPanel>
-        <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
-            <ProgressBar x:Name="progressBar" Value="{Binding Path=Statistics.InstanceCount}"  Minimum="{Binding Path= MinValueProgressBar}" Maximum="{Binding Path=MaxValueProgressBar}" Style="{DynamicResource StyleProgressBar}"></ProgressBar>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5" >
+            <ProgressBar x:Name="progressBar" DataContext="{Binding Source={x:Static stats:CommonStats.Reference}}" Value="{Binding InstanceCount}"  Minimum="{Binding MinValueProgressBar}" Maximum="{Binding CountExpressionInFile}" Style="{DynamicResource StyleProgressBar}"></ProgressBar>
         </StackPanel>
     </Grid>
 </Window>

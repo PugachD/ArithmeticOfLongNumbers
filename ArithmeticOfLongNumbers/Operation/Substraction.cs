@@ -1,36 +1,34 @@
-﻿using ArithmeticOfLongNumbers.Utils;
+﻿#define Timer
+using ArithmeticOfLongNumbers.Utils;
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Threading;
 
 namespace ArithmeticOfLongNumbers.Operation
 {
     
-    public class Substraction : Expression
+    public sealed class Substraction : Expression
     {
-        
-        public Substraction():base()
+        public Substraction(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2) { }
+
+        public override BigInteger Operator()
         {
-        }
-        public Substraction(BigInteger bigInt1, BigInteger bigInt2) : base(bigInt1, bigInt2)
-        {
-        }
-        public override BigInteger Operator(ref MathStatistics stat)
-        {
-            BigInteger result = new BigInteger();
+#if Timer
             Stopwatch sWatch = new Stopwatch();
             sWatch.Start();
+#endif
+            number1 = number1 - number2;
 
-            result = number1 - number2;
-
+#if Timer
             sWatch.Stop();
 
-            stat.CountSubstractionOperation++;
-            stat.TotalCalculationTimeSubstraction += sWatch.Elapsed;
-            stat.AverageCalculationTimeSubstraction = stat.CalculateAverageTime(stat.TotalCalculationTimeSubstraction, stat.CountSubstractionOperation);
-            //stat.IncrementOverallProcessingTime(sWatch.Elapsed);
-
-            return result;
+            Interlocked.Increment(ref SubstractionStats.Reference.countOperation);
+            lock (SubstractionStats.Reference)
+                SubstractionStats.Reference.totalCalculationTime += sWatch.Elapsed;
+#endif
+            sWatch = null;
+            return number1;
         }
     }
 }

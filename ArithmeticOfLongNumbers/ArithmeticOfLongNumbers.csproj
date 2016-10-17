@@ -91,7 +91,12 @@
     <Compile Include="Operation\Multiplication.cs" />
     <Compile Include="Operation\Substraction.cs" />
     <Compile Include="Parser\Parsing.cs" />
-    <Compile Include="Utils\MathStatistics.cs" />
+    <Compile Include="Utils\AdditionStats.cs" />
+    <Compile Include="Utils\CommonStats.cs" />
+    <Compile Include="Utils\DivisionStats.cs" />
+    <Compile Include="Utils\MultiplicationStats.cs" />
+    <Compile Include="Utils\SubstractionStats.cs" />
+    <Compile Include="Utils\UnaryNegativeStats.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="Model\PropertyChangedClass.cs" />
     <Page Include="Views\View.xaml">

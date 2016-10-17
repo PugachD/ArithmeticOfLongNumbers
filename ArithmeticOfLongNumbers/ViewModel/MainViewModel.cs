@@ -4,8 +4,6 @@ using System.Windows;
 using System;
 using System.ComponentModel;
 using ArithmeticOfLongNumbers.Commands;
-using System.Threading;
-using ArithmeticOfLongNumbers.Operation;
 using ArithmeticOfLongNumbers.Utils;
 
 namespace ArithmeticOfLongNumbers.ViewModel
@@ -17,12 +15,10 @@ namespace ArithmeticOfLongNumbers.ViewModel
         private BackgroundWorker bgWorkerCalculation;
         private bool isEnabledBtnRun = false, isEnabledBtnOpenFile = false;
         private FileWork file;
-        private MathStatistics statistics;
         private string fullPathNameTxtFile;
         private string[] allLineFile;
         private bool isNameButtonAfterRun;
-        private int minValueProgressBar = 0, maxValueProgressBar = 10;
-        double valueProgressBar;
+        private int maxValueProgressBar = 10;
         #endregion
 
         #region Member RelayCommands that implement ICommand
@@ -38,17 +34,11 @@ namespace ArithmeticOfLongNumbers.ViewModel
             worker.DoWork += new DoWorkEventHandler(Initialization);
             worker.RunWorkerAsync();
             Reset();
-            //Initialization();
         }
         #endregion
 
         #region Properties
         
-        public MathStatistics Statistics
-        {
-            get { return statistics; }
-            set { statistics = value; OnPropertyChanged("Statistics"); }
-        }
         public bool IsEnabledBtnRun
         {
             get { return isEnabledBtnRun; }
@@ -95,30 +85,6 @@ namespace ArithmeticOfLongNumbers.ViewModel
             get { return maxValueProgressBar; }
             set { maxValueProgressBar = value; OnPropertyChanged("MaxValueProgressBar"); }
         }
-
-        public int MinValueProgressBar
-        {
-            get { return minValueProgressBar; }
-            set { minValueProgressBar = value; OnPropertyChanged("MinValueProgressBar"); }
-        }
-
-        /// <summary>
-        /// This is the Value.  The Counter should display this.
-        /// </summary>
-        public Double ValueProgressBar
-        {
-            get { return valueProgressBar; }
-            set
-            {
-                if (value <= maxValueProgressBar)
-                {
-                    if (value >= minValueProgressBar) { valueProgressBar = value; }
-                    else { valueProgressBar = minValueProgressBar; }
-                }
-                else { valueProgressBar = maxValueProgressBar; }
-                OnPropertyChanged("ValueProgressBar");
-            }
-        }
         #region ICommand Properties
         public ICommand OpenFileCommand
         {
@@ -164,7 +130,6 @@ namespace ArithmeticOfLongNumbers.ViewModel
             try
             {
                 IsNameButtonAfterRun = false;
-                //Инициализация объектов
                 file = new FileWork();
                 basicCalculate = new BasicCalculations(this);
                 IsEnabledBtnOpenFile = true;
@@ -173,7 +138,7 @@ namespace ArithmeticOfLongNumbers.ViewModel
             {
                 IsEnabledBtnOpenFile = false;
                 IsEnabledBtnRun = false;
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Инициализация прервана" + ex.Message);
             }
 
         }
@@ -208,23 +173,21 @@ namespace ArithmeticOfLongNumbers.ViewModel
                     IsNameButtonAfterRun = !IsNameButtonAfterRun;
 
                     Reset();
-                    Statistics.CountExpressionInFile = MaxValueProgressBar;
+                    CommonStats.Reference.CountExpressionInFile = MaxValueProgressBar;
                     bgWorkerCalculation = new BackgroundWorker() { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
                     bgWorkerCalculation.DoWork += new DoWorkEventHandler(worker_DoRunCalculation);
                 
-
                     // Configure the function to run when completed
                     bgWorkerCalculation.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
                     // Launch the worker
                     bgWorkerCalculation.RunWorkerAsync();
-
                 }
                 else
                 {
                     bgWorkerCalculation.CancelAsync();
-                    IsNameButtonAfterRun = false;
-                    IsEnabledBtnOpenFile = true;
+                    //IsNameButtonAfterRun = false;
+                    //IsEnabledBtnOpenFile = true;
                 }
             }
             catch (Exception ex)
@@ -236,19 +199,18 @@ namespace ArithmeticOfLongNumbers.ViewModel
         private void worker_DoRunCalculation(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-                try
+                //try
                 {
                     basicCalculate.RunCalculation(allLineFile);
                     file.SaveFile(basicCalculate.GetAnswerTxtFile);
                     worker.ReportProgress(0);
                 }
-                catch (Exception ex)
+                //catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                   // MessageBox.Show(ex.Message);
                 }
 
         }
-        
 
         /// <summary>
         /// This worker_RunWorkerCompleted is called when the worker is finished.
@@ -259,9 +221,11 @@ namespace ArithmeticOfLongNumbers.ViewModel
         {
             IsNameButtonAfterRun = false;
             IsEnabledBtnOpenFile = true;
-            Statistics.PredictionOfRemainingTime = new TimeSpan(0);
-            if (e.Cancelled)
-                MessageBox.Show("Подсчет остановлен");
+            CommonStats.Reference.PredictionOfRemainingTime = new TimeSpan(0);
+            if (e.Error != null)
+                MessageBox.Show(e.Error.Message);
+            else if (e.Cancelled)
+                MessageBox.Show("Подсчет остановлен. Данные не записаны в файл");
             else
                 MessageBox.Show("Данные записаны в файл: " + file.NameNewTxtFile);
         }
@@ -271,11 +235,13 @@ namespace ArithmeticOfLongNumbers.ViewModel
         /// </summary>
         private void Reset()
         {
-            Expression.ResetInstanceStatistic();
-            Statistics = new MathStatistics();
-            Expression.InitializeStat(Statistics);
             basicCalculate = new BasicCalculations(this);
-            //Value = Min;
+            AdditionStats.Reference.Reset();
+            DivisionStats.Reference.Reset();
+            MultiplicationStats.Reference.Reset();
+            SubstractionStats.Reference.Reset();
+            UnaryNegativeStats.Reference.Reset();
+            CommonStats.Reference.Reset();
         }
         
         public bool CancellationPending()

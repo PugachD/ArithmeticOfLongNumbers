@@ -7,6 +7,6 @@ namespace ArithmeticOfLongNumbers.Interface
     public interface IExpression
     {
         
-        BigInteger Operator(ref MathStatistics stat);
+        BigInteger Operator();
     }
 }

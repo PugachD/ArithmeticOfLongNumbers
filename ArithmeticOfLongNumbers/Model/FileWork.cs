@@ -33,12 +33,12 @@ namespace ArithmeticOfLongNumbers
                 nameTxtFile = Path.GetFileNameWithoutExtension(FullPathNameTxtFile);
                 return true;
             }
-            else if (FullPathNameTxtFile == "")
+            else //if (FullPathNameTxtFile == "")
             {
                 throw new FileNotFoundException("Файл не выбран");
             }
-            else
-                return false;
+            //else
+            //    return false;
 
         }
 
@@ -78,9 +78,9 @@ namespace ArithmeticOfLongNumbers
 
         public void CheckedForErrorsFile()
         {
-            if (countExpressions > 1000000)
+            if (CountExpressions > 1000000)
                 throw new OverflowException("Задано недопустимое количество выражений");
-            if (countExpressions > (textFile.Length - 1))
+            if (CountExpressions > (textFile.Length - 1))
                 throw new OverflowException("Количество строк для расчета превышает число строк в файле");
         }
         

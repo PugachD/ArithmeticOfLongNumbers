@@ -1,26 +1,23 @@
-﻿using System;
+﻿#define Inheritance
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using ArithmeticOfLongNumbers.Operation;
 using ArithmeticOfLongNumbers.Model;
 using ArithmeticOfLongNumbers.Utils;
+using System.Text;
 
 namespace ArithmeticOfLongNumbers.Parser
 {
-    public class Parsing
+    public struct Parsing
     {
-        //Метод возвращает true, если проверяемый символ - разделитель ("пробел" или "равно")
-        private bool IsDelimeter(char c)
-        {
-            if ((" ".IndexOf(c) != -1))
-                return true;
-            return false;
-        }
-
+        private const char unaryMinus = '_';
+        private string RPN;
+        
         //Метод возвращает true, если проверяемый символ - оператор
         private bool IsOperator(char с)
         {
-            if (("+-/*().".IndexOf(с) != -1))
+            if (("+-/*()".IndexOf(с) != -1))
                 return true;
             return false;
         }
@@ -34,149 +31,207 @@ namespace ArithmeticOfLongNumbers.Parser
                 case '(': return 1;
                 case '+':
                 case '-':
-                    return 3;
+                case unaryMinus:
+                    return 2;
                 case '*': //return 4;
                 case '/':
-                    return 4;
+                    return 3;
                 default: return 7;
             }
         }
 
-        //"Входной" метод класса
-        /*static public double Calculate(Vector v1)
+        public void GetExpression(string input)
         {
-            //input = SplitVariables(x, input);
-            //string output = GetExpression(input); //Преобразовываем выражение в постфиксную запись
-            double result = Counting(MainWindow.Input, v1, MainWindow.variableList); //Решаем полученное выражение
-            return result; //Возвращаем результат
-        }*/
-
-        public string GetExpression(string input)
-        {
-            string output = string.Empty; //Строка для хранения выражения
+            bool prevSymbolOpBrace = false;
+            char inputI;
+            StringBuilder output = new StringBuilder();
             Stack<char> operStack = new Stack<char>(); //Стек для хранения операторов
+            short Length = (short)input.Length;
+            output.Capacity = Length;
 
-            for (int i = 0; i < input.Length; i++) //Для каждого символа в входной строке
+            for (int i = 0; i < Length; i++) //Для каждого символа в входной строке
             {
+                inputI = input[i];
                 //Разделители пропускаем
-                if (IsDelimeter(input[i]))
+                if (inputI == ' ')
                     continue; //Переходим к следующему символу
 
                 //Если символ - цифра, то считываем все число
-                if (Char.IsDigit(input[i])) //Если цифра
+                if (Char.IsDigit(inputI)) //Если цифра
                 {
+                    prevSymbolOpBrace = false;
                     //Читаем до разделителя или оператора, что бы получить число
-                    while (!IsDelimeter(input[i]) && !IsOperator(input[i]))
+                    while (input[i] != ' ' && !IsOperator(input[i]))
                     {
-                        output += input[i]; //Добавляем каждую цифру числа к нашей строке
+                        output.Append(input[i]); //Добавляем каждую цифру числа к нашей строке
                         i++; //Переходим к следующему символу
-
-                        if (i == input.Length) break; //Если символ - последний, то выходим из цикла
+                        //inputI = input[i];
+                        if (i == Length) break; //Если символ - последний, то выходим из цикла
                     }
 
-                    output += " "; //Дописываем после числа пробел в строку с выражением
+                    output.Append(" "); //Дописываем после числа пробел в строку с выражением
                     i--; //Возвращаемся на один символ назад, к символу перед разделителем
+                    inputI = input[i];
                 }
                 //Если символ - оператор
-                if (IsOperator(input[i])) //Если оператор
+                else if (IsOperator(inputI)) //Если оператор
                 {
-                    if (input[i] == '(') //Если символ - открывающая скобка
-                        operStack.Push(input[i]); //Записываем её в стек
-                    else if (input[i] == ')') //Если символ - закрывающая скобка
+                    if (inputI == '-')
                     {
-                        //Выписываем все операторы до открывающей скобки в строку
-                        char s = operStack.Pop();
-
-                        while (s != '(')
+                        if (i == 0 || prevSymbolOpBrace)
                         {
-                            output += s.ToString() + ' ';
-                            s = operStack.Pop();
+                            operStack.Push(unaryMinus);
+                            continue;
                         }
                     }
-                    else //Если любой другой оператор
+                    prevSymbolOpBrace = false;
+                    switch (inputI)
                     {
-                        if (operStack.Count > 0) //Если в стеке есть элементы
-                            if (GetPriority(input[i]) <= GetPriority(operStack.Peek())) //И если приоритет нашего оператора меньше или равен приоритету оператора на вершине стека
-                                output += operStack.Pop().ToString() + " "; //То добавляем последний оператор из стека в строку с выражением
+                        case '(': //Если символ - открывающая скобка
+                            prevSymbolOpBrace = true;
+                            operStack.Push(inputI); //Записываем её в стек
+                            break;
+                        case ')': //Если символ - закрывающая скобка
+                                  //Выписываем все операторы до открывающей скобки в строку
+                            char s = operStack.Pop();
 
-                        operStack.Push(char.Parse(input[i].ToString())); //Если стек пуст, или же приоритет оператора выше - добавляем операторов на вершину стека
+                            while (s != '(')
+                            {
+                                output.Append(s.ToString());
+                                output.Append(' ');
+                                s = operStack.Pop();
+                            }
+                            break;
+                        default: //Если любой другой оператор
+                            while (operStack.Count > 0) //И если приоритет нашего оператора меньше или равен приоритету оператора на вершине стека
+                            {
+                                if (GetPriority(inputI) <= GetPriority(operStack.Peek()))
+                                {
+                                    output.Append(operStack.Pop()); //То добавляем последний оператор из стека в строку с выражением
+                                    output.Append(" ");
+                                }
+                                else
+                                    break;
+                            }
 
+                            operStack.Push(inputI); //Если стек пуст, или же приоритет оператора выше - добавляем операторов на вершину стека
+                            break;
                     }
                 }
             }
 
             //Когда прошли по всем символам, выкидываем из стека все оставшиеся там операторы в строку
             while (operStack.Count > 0)
-                output += operStack.Pop() + " ";
-
-            return output; //Возвращаем выражение в постфиксной записи
+            {
+                output.Append(operStack.Pop());
+                output.Append(" ");
+            }
+            operStack = null;
+            RPN = output.ToString(); //Возвращаем выражение в постфиксной записи
         }
 
-        public BigInteger Counting(string input, ref MathStatistics stat)
+        public BigInteger Counting()
         {
-            BigInteger result = 0; //Результат
+            //BigInteger result = 0; //Результат
             Stack<BigInteger> temp = new Stack<BigInteger>(); //Временный стек для решения
-            string output = string.Empty; //Строка для хранения выражения
+            BigInteger firstNumber = 0, secondNumber;
+            StringBuilder a;
+            Expression expression;// = new Addition();
+            short Length = (short)RPN.Length;
+            char RPNI;
 
-            for (int i = 0; i < input.Length; i++) //Для каждого символа в строке
+            for (int i = 0; i < Length; i++) //Для каждого символа в строке
             {
+                RPNI = RPN[i];
                 //Если символ - цифра, то читаем все число и записываем на вершину стека
-                if (Char.IsDigit(input[i]))
+                if (Char.IsDigit(RPNI))
                 {
-                    string a = string.Empty;
+                    a = new StringBuilder(Length);
 
-                    while (!IsDelimeter(input[i]) && !IsOperator(input[i])) //Пока не разделитель
+                    while (RPNI != ' ' && !IsOperator(RPNI) && RPNI != unaryMinus) //Пока не разделитель
                     {
-                        a += input[i]; //Добавляем
+                        a.Append(RPNI); //Добавляем
                         i++;
-                        if (i == input.Length) break;
-                    }
-                    temp.Push(BigInteger.Parse(a)); //Записываем в стек
-                    i--;
-                }
-                else if (IsOperator(input[i])) //Если символ - оператор
-                {
-                    Expression expression;
-                    //Берем два последних значения из стека
-                    BigInteger a = temp.Pop();
-                    BigInteger b;
-                    bool isUnaryMinus = false;
-                    if (temp.Count == 0) { b = 0; isUnaryMinus = true; }
-                    else { b = temp.Pop(); }
+                        RPNI = RPN[i];
 
-                    switch (input[i]) //И производим над ними действие, согласно оператору
+                        if (i == Length) break;
+                    }
+                    temp.Push(BigInteger.Parse(a.ToString())); //Записываем в стек
+                    i--;
+                    RPNI = RPN[i];
+                    a = null;
+                }
+                else if (IsOperator(RPNI) || RPNI == unaryMinus) //Если символ - оператор
+                {
+                    //Берем два последних значения из стека
+                    firstNumber = temp.Pop();
+                    if (temp.Count == 0 || RPNI == unaryMinus) { secondNumber = 0; }
+                    else { secondNumber = temp.Pop(); }
+
+                    switch (RPNI) //И производим над ними действие, согласно оператору
                     {
-                        //case '.': Double.TryParse(Int32.Parse(b.ToString()).ToString() + "." + Int32.Parse(a.ToString()).ToString(), NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture("en-GB"), out result); break;//b + double.Parse("0." + Int32.Parse(a.ToString()).ToString()); break;
                         case '+':
-                            expression = new Addition(b, a);
-                            result = expression.Operator(ref stat);
+#if Inheritance
+                            //lock (expression)
+                            {
+                                expression = new Addition(secondNumber, firstNumber);
+                                firstNumber = expression.Operator();
+                            }
+#else
+                            firstNumber = firstNumber + secondNumber;
+#endif
                             break;
                         case '-':
-                            if (isUnaryMinus)
-                            {
-                                expression = new UnaryNegative(b, a); 
-                                result = expression.Operator(ref stat);
-                            }
-                            else
-                            {
-                                expression = new Substraction(b, a);
-                                result = expression.Operator(ref stat);
-                            }
+#if Inheritance
+                                //lock (expression)
+                                {
+                                    expression = new Substraction(secondNumber, firstNumber);
+                                firstNumber = expression.Operator();
+                                }
+#else
+                            firstNumber = -firstNumber;
+#endif
+                                break;
+                        case unaryMinus:
+#if Inheritance
+                                //lock (expression)
+                                {
+                                    expression = new UnaryNegative(secondNumber, firstNumber);
+                                firstNumber = expression.Operator();
+                                }
+#else
+                            firstNumber =  secondNumber - firstNumber;
+#endif
                             break;
                         case '*':
-                            expression = new Multiplication(b, a);
-                            result = expression.Operator(ref stat);
+#if Inheritance
+                            //lock (expression)
+                            {
+                                expression = new Multiplication(secondNumber, firstNumber);
+                                firstNumber = expression.Operator();
+                            }
+#else
+                            firstNumber = firstNumber * secondNumber;
+#endif
                             break;
                         case '/':
-                            expression = new Division(b, a);
-                            result = expression.Operator(ref stat);
+#if Inheritance
+                            //lock (expression)
+                            {
+                                expression = new Division(secondNumber, firstNumber);
+                                firstNumber = expression.Operator();
+                            }
+#else
+                            firstNumber = secondNumber/ firstNumber;
+#endif
                             break;
-                            //case '^': result = double.Parse(Math.Pow(double.Parse(b.ToString()), double.Parse(a.ToString())).ToString()); break;
                     }
-                    temp.Push(result); //Результат вычисления записываем обратно в стек
+                    temp.Push(firstNumber); //Результат вычисления записываем обратно в стек
                 }
             }
-            return temp.Peek(); //Забираем результат всех вычислений из стека и возвращаем его
+            temp = null;
+            expression = null;
+            return firstNumber;//temp.Peek(); //Забираем результат всех вычислений из стека и возвращаем его
         }
     }
 }
